@@ -89,7 +89,7 @@ to the collection are related, but so far, I haven't seen any traction on gettin
 - https://github.com/Juniper/ansible-junos-stdlib/issues/622
 - https://github.com/Juniper/ansible-junos-stdlib/issues/808
 
-### Management Interfaces
+### VNF Management Interfaces
 
 Juniper's documentation for the interfaces available to a VNF states this:
 
