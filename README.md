@@ -145,32 +145,32 @@ Based on my experience with the NFX line, it means this:
 > in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
 > ```text
 > ip a
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host noprefixroute 
-       valid_lft forever preferred_lft forever
-2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether 2c:21:31:5f:c1:20 brd ff:ff:ff:ff:ff:ff
-    altname enp0s3
-    altname enx2c21315fc120
-    inet 192.0.2.100/24 metric 1024 brd 192.0.2.255 scope global dynamic ens3
-       valid_lft 3578sec preferred_lft 3578sec
-    inet6 fe80::2e21:31ff:fe5f:c120/64 scope link proto kernel_ll 
-       valid_lft forever preferred_lft forever
-3: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether 2c:21:31:5f:c1:21 brd ff:ff:ff:ff:ff:ff
-    altname enp0s4
-    altname enx2c21315fc121
-    inet6 fe80::2e21:31ff:fe5f:c121/64 scope link proto kernel_ll 
-       valid_lft forever preferred_lft forever
-4: ens5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-    link/ether 2c:21:31:5f:c1:22 brd ff:ff:ff:ff:ff:ff
-    altname enp0s5
-    altname enx2c21315fc122
-    inet6 fe80::2e21:31ff:fe5f:c122/64 scope link proto kernel_ll 
-       valid_lft forever preferred_lft forever
+> 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+>     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+>     inet 127.0.0.1/8 scope host lo
+>        valid_lft forever preferred_lft forever
+>     inet6 ::1/128 scope host noprefixroute 
+>        valid_lft forever preferred_lft forever
+> 2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+>     link/ether 2c:21:31:5f:c1:20 brd ff:ff:ff:ff:ff:ff
+>     altname enp0s3
+>     altname enx2c21315fc120
+>     inet 192.0.2.100/24 metric 1024 brd 192.0.2.255 scope global dynamic ens3
+>        valid_lft 3578sec preferred_lft 3578sec
+>     inet6 fe80::2e21:31ff:fe5f:c120/64 scope link proto kernel_ll 
+>        valid_lft forever preferred_lft forever
+> 3: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+>     link/ether 2c:21:31:5f:c1:21 brd ff:ff:ff:ff:ff:ff
+>     altname enp0s4
+>     altname enx2c21315fc121
+>     inet6 fe80::2e21:31ff:fe5f:c121/64 scope link proto kernel_ll 
+>        valid_lft forever preferred_lft forever
+> 4: ens5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+>     link/ether 2c:21:31:5f:c1:22 brd ff:ff:ff:ff:ff:ff
+>     altname enp0s5
+>     altname enx2c21315fc122
+>     inet6 fe80::2e21:31ff:fe5f:c122/64 scope link proto kernel_ll 
+>        valid_lft forever preferred_lft forever
 > ```
 > As per the output, we can see that `eth1` was mapped to the first interface, `ens3`. `eth1` being the internal 
 > management network, and that `eth0`, the interface for the `out-of-band` management network was not the first
