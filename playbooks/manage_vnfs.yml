@@ -4,7 +4,7 @@
   connection: juniper.device.pyez
   gather_facts: false
   vars:
-    # File transfers to network appliances can be slow; tried using the dedicated `timeout` parameter for the 
+    # File transfers to network appliances can be slow; tried using the dedicated `timeout` parameter for the
     # juniper.device.file_copy module, but it didn't seem to work
     ansible_command_timeout: 300
   tasks:
