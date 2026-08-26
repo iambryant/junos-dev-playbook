@@ -144,7 +144,7 @@ Based on my experience with the NFX line, it means this:
 > Do not assume that eth0 maps to the first available interface in the VNF, eth1 maps to the second available interface
 > in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
 > ```text
-> ip a
+> admin@ubuntu-01:~$ ip a
 > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
 >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 >     inet 127.0.0.1/8 scope host lo
