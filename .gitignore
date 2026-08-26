@@ -5,4 +5,4 @@ group_vars/*.yml
 host_vars/*.yml
 inventory
 roles/
-playbooks/templates/*-data.j2
+playbooks/templates/user-data.j2
