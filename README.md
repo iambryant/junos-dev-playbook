@@ -105,16 +105,19 @@ Juniper's documentation for the interfaces available to a VNF states this:
 ```
 
 Based on my experience with the NFX line, it means this:
+
 - `eth0` is used as the default management interface for the VNF and is accessible through the management interface of
   the NFX itself.
-  For example, if your NFX is connected to a management network on `fxp0`, network traffic for eth0 will be sent through
-  that interface. I haven't tested if it's bound to the fxp0 interface specifically, or any interface the NFX uses for
-  management, such as a front panel interface or an `irb` interface. I assume it's the former. It is known as the
-  `out-of-band` management interface.
+  For example, if your NFX is connected to a management network on `fxp0`, network traffic for `eth0` will be sent
+  through that interface. I haven't tested if it's bound to the fxp0 interface specifically, or any interface the NFX
+  uses for management, such as a front panel interface or an `irb` interface. I assume it's the former. It is known as
+  the `out-of-band` management interface.
+
 - `eth1` maps to an internal subnet on the NFX that is used if you use `request virtual-network-function telnet <vnf-name>`
   or `request virtual-network-function ssh <vnf-name>` to try to access a VNF. From testing, the allocated subnet is
   a `192.0.2.x/24` subnet. It is known as the `internal` management interface. For example, when testing the creation
   of a VNF:
+
   ```text
   admin@ubuntu-01:~$ ip a show dev ens3
   2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
@@ -136,13 +139,14 @@ Based on my experience with the NFX line, it means this:
   This key is not known by any other names.
   Are you sure you want to continue connecting (yes/no/[fingerprint])?
   ```
+
 - `eth2` and onward are interfaces that you can do with as you please. Technically, you can assign the `out-of-band` or
   `internal` designations to them from the edit hierarchy, if you need more management interfaces. Typically, you would
   map `eth2` and onward interfaces to front panel interfaces using either the `vlan` method or `SR-IOV` method.
 
 > [!IMPORTANT]
-> Do not assume that eth0 maps to the first available interface in the VNF, eth1 maps to the second available interface
-> in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
+> Do not assume that `eth0` maps to the first available interface in the VNF, `eth1` maps to the second available
+> interface in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
 > ```text
 > admin@ubuntu-01:~$ ip a
 > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
