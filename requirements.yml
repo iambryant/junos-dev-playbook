@@ -1,0 +1,4 @@
+---
+collections:
+  - name: juniper.device
+    version: 2.0.4

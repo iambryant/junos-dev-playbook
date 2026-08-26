@@ -1,0 +1,19 @@
+---
+# Encrypt passwords with Ansible vault!!!
+# Plaintext: test123
+system_root_authentication: "$6$E2YCaP1Z4h30.nKy$YxS6uOV9sVplHYBpAbjaKHJWyV0jeWQTnKnc2X2VEhNrm0JYX0tS44c6SdRi0RTa9t6Uyxpek98cHgT4DsKff/"
+
+system_login_users:
+  - name: "admin"
+    class: "super-user"
+    authentication_type: "encrypted-password"
+    # Plaintext: test123
+    authentication_value: "$6$E2YCaP1Z4h30.nKy$YxS6uOV9sVplHYBpAbjaKHJWyV0jeWQTnKnc2X2VEhNrm0JYX0tS44c6SdRi0RTa9t6Uyxpek98cHgT4DsKff/"
+
+dns_servers:
+  - 8.8.4.4 # dns.google
+  - 8.8.8.8 # dns.google
+
+ntp_servers:
+  - 129.6.15.28 # time-a-g.nist.gov
+  - 129.6.15.29 # time-b-g.nist.gov

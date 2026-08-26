@@ -1,0 +1,24 @@
+---
+- name: "Check if VNF {{ vnf_instance.name }} already exists"
+  juniper.device.command:
+    commands:
+      - "show virtual-network-functions {{ vnf_instance.name }}"
+    formats: "json"
+  register: vnf_check
+
+- name: "Ensure VNF is deleted if it already exists"
+  block:
+    - name: "Ensure VNFs are deleted"
+      juniper.device.config:
+        load: "set"
+        lines:
+          - "delete virtual-network-functions {{ vnf_instance.name }}"
+        comment: "VNF {{ vnf_instance.name }} removed with Ansible"
+
+    - name: "Ensure VNF disk and cloud-init disk are deleted"
+      juniper.device.command:
+        commands:
+          - "file delete /var/public/{{ vnf_instance.name }}.qcow2"
+          - "file delete /var/public/{{ vnf_instance.name }}.iso"
+        formats: "json"
+  when: vnf_check.parsed_output['vnf-information'][0] | length > 0

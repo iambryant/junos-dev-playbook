@@ -1,0 +1,85 @@
+---
+- name: "Check if VNF {{ vnf_instance.name }} already exists"
+  juniper.device.command:
+    commands:
+      - "show virtual-network-functions {{ vnf_instance.name }}"
+    formats: "json"
+  register: vnf_check
+
+- name: "Ensure VNF is created if it doesn't already exist"
+  block:
+    - name: "Ensure VNF QCOW2 disk is created"
+      ansible.builtin.copy:
+        src: "/tmp/ubuntu-26.04-server-cloudimg-amd64.img"
+        dest: "/tmp/{{ vnf_instance.name }}.qcow2"
+
+    - name: "Ensure UUID is generated"
+      ansible.builtin.command: uuidgen
+      register: vnf_system_uuid
+      changed_when: false
+
+    - name: "Ensure VNF meta-data file is created"
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/meta-data.j2"
+        dest: "/tmp/meta-data"
+        mode: '0644'
+
+    - name: "Ensure VNF network-config file is present"
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/network-config.j2"
+        dest: "/tmp/network-config"
+        mode: '0644'
+
+    - name: "Ensure VNF user-data file is present"
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/user-data.j2"
+        dest: "/tmp/user-data"
+        mode: '0644'
+
+    - name: "Ensure VNF cloud-init disk is generated"
+      ansible.builtin.command: >-
+        mkisofs -output {{ vnf_instance.name }}.iso
+        -volid cidata -joliet -rock
+        meta-data network-config user-data
+      args:
+        chdir: "/tmp"
+        creates: "{{ vnf_instance.name }}.iso"
+
+    - name: "Ensure VNF disk is uploaded"
+      juniper.device.file_copy:
+        action: "put"
+        protocol: "scp"
+        local_dir: "/tmp"
+        file: "{{ vnf_instance.name }}.qcow2"
+        remote_dir: "/var/public"
+
+    - name: "Ensure VNF cloud-init disk is uploaded"
+      juniper.device.file_copy:
+        action: "put"
+        protocol: "scp"
+        local_dir: "/tmp"
+        file: "{{ vnf_instance.name }}.iso"
+        remote_dir: "/var/public"
+
+    - name: "Ensure VNF is created"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        template: "{{ playbook_dir }}/templates/virtual_network_functions.conf.j2"
+        comment: "VNF {{ vnf_instance.name }} created with Ansible"
+        vars:
+          virtual_network_function: "{{ vnf_instance }}"
+
+    - name: "Ensure VNF files are cleaned up from /tmp"
+      ansible.builtin.file:
+        path: "/tmp/{{ vnf_file_tmp }}"
+        state: absent
+      loop:
+        - "{{ vnf_instance.name }}.qcow2"
+        - "{{ vnf_instance.name }}.iso"
+        - "meta-data"
+        - "network-config"
+        - "user-data"
+      loop_control:
+        loop_var: "vnf_file_tmp"
+  when: vnf_check.parsed_output['vnf-information'][0] | length == 0

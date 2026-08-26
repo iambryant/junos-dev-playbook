@@ -1,0 +1,80 @@
+---
+# Normally, you'd use ZTP to load base configurations on Juniper devices. ZTP is Juniper's solution to loading a base
+# configuration on a new/factory-reset device. You can read about it here:
+# https://www.juniper.net/documentation/us/en/software/junos/junos-install-upgrade/topics/topic-map/zero-touch-provision.html#id-zero-touch-provisioning-using-dhcp-options
+# However, oftentimes device base configs are written to prefer external servers like redirect.juniper.net and aren't
+# as compatible with local DHCP + TFTP/HTTP setups. This playbook serves to be an easy solution to replace that; it
+# loads and overwrites the base config on a new Juniper device with your preferred base config, over serial;
+# no network needed!
+
+- name: "Bootstrap devices over console"
+  # Note: Ansible requires a host/group here for inventory context,
+  # even though the configuration is being sent over serial.
+  # Replace 'nfx' with the device(s) you're targeting.
+  hosts: nfx
+  connection: local
+  gather_facts: false
+  vars:
+    user: "root" # Most Juniper devices come with a factory default root user and no password
+    serial_port: "/dev/cu.usbserial-ABSCE0OL" # My macOS serial device path, change if needed
+  tasks:
+    - name: "Ensure facts are gathered from device"
+      juniper.device.facts:
+        mode: "serial"
+        port: "{{ serial_port }}"
+        baud: 9600
+        user: "{{ user }}"
+        passwd: ""
+      register: device_output
+
+    - name: "Ensure device model is set as fact"
+      ansible.builtin.set_fact:
+        device_model: "{{ device_output.ansible_facts.junos.model | lower }}"
+
+    - name: "Ensure device management interface is set as fact"
+      ansible.builtin.set_fact:
+        management_interface: >-
+          {%- if device_model.startswith(('acx', 'qfx')) -%}
+            em0
+          {%- elif device_model.startswith(('mx', 'nfx', 'ptx', 'srx')) -%}
+            fxp0
+          {%- elif device_model.startswith('ex') -%}
+            me0
+          {%- endif -%}
+
+    - name: "Retrieve the current committed configuration"
+      juniper.device.config:
+        retrieve: "committed"
+        filter: "system/root-authentication"
+        mode: "serial"
+        port: "{{ serial_port }}"
+        baud: 9600
+        user: "{{ user }}"
+        passwd: ""
+        diff: false
+        check: false
+        commit: false
+      register: current_config
+
+    - name: "Ensure base configuration is loaded to Juniper device over serial"
+      juniper.device.config:
+        load: "override"
+        format: "text"
+        template: "{{ playbook_dir }}/templates/juniper.conf.j2"
+        # juniper.device.config doesn't inherit Ansible's variable context, so you need to pass variables to the
+        # template that you want to be used
+        comment: "Loaded bootstrap configuration with Ansible"
+        vars:
+          login_users: "{{ system_login_users }}"
+          root_authentication: "{{ system_root_authentication }}"
+          host_name: "{{ inventory_hostname.split('.')[0] }}"
+          domain_name: "{{ inventory_hostname.split('.')[1:] | join('.') }}"
+          mgmt_interface: "{{ management_interface }}"
+          mgmt_ip: "{{ management_ip }}"
+          mgmt_gateway: "{{ management_gateway }}"
+        mode: "serial"
+        port: "{{ serial_port }}"
+        baud: 9600
+        user: "{{ user }}"
+        passwd: ""
+      when: "'root-authentication' not in current_config.config"

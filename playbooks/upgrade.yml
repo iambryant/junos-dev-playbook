@@ -1,0 +1,16 @@
+---
+- name: "Upgrade Junos OS on devices"
+  hosts: qfx # Replace 'qfx' with device(s) you're targeting
+  connection: juniper.device.pyez
+  gather_facts: false
+  tasks:
+    - name: "Upgrade Junos OS from local machine"
+      juniper.device.software:
+        local_package: "~/Downloads/jinstall-host-qfx-5-21.4R3-S2.3-signed.tgz"
+        version: "21.4R3-S2.3"
+        reboot: true
+      register: install_result
+
+    - name: "Display results"
+      ansible.builtin.debug:
+        var: install_result

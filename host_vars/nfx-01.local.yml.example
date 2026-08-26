@@ -1,0 +1,23 @@
+---
+management_ip: "192.168.1.10/24"
+management_gateway: "192.168.1.1"
+
+hugepage_count: 10
+
+vnf_instances:
+  - name: "ubuntu-01"
+    vcpu_count: 2
+    memory: 8388608
+    vcpu_mapping:
+      - virtual_cpu: 0
+        physical_cpu: 2
+      - virtual_cpu: 1
+        physical_cpu: 8
+    hardware_virtualization: true
+    hugepage: true
+    interfaces:
+      - name: "eth2"
+        usage: "vlan"
+        mode: "access"
+        vlan_name: "default"
+    no_autostart: true

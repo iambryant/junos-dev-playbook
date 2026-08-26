@@ -1,0 +1,47 @@
+system {
+    host-name {{ host_name }};
+    root-authentication {
+        encrypted-password "{{ root_authentication }}";
+    }
+    login {
+{% for user in login_users %}
+        user {{ user.name }} {
+            class {{ user.class }};
+            authentication {
+                {{ user.authentication_type }} "{{ user.authentication_value }}";
+            }
+        }
+{% endfor %}
+    }
+    services {
+        netconf {
+            ssh;
+            rfc-compliant;
+            yang-compliant;
+        }
+        ssh {
+            root-login deny;
+        }
+    }
+    domain-name {{ domain_name }};
+    management-instance;
+}
+interfaces {
+    {{ mgmt_interface }} {
+        unit 0 {
+            family inet {
+                address {{ mgmt_ip }};
+            }
+        }
+    }
+}
+routing-instances {
+    mgmt_junos {
+        description "Management VRF";
+        routing-options {
+            static {
+                route 0.0.0.0/0 next-hop {{ mgmt_gateway }};
+            }
+        }
+    }
+}

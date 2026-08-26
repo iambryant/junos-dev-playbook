@@ -1,0 +1,33 @@
+---
+- name: "Ensure NFX hypervisors are configured"
+  hosts: nfx
+  connection: juniper.device.pyez
+  gather_facts: false
+  tasks:
+    - name: "Ensure hugepages are set"
+      juniper.device.config:
+        load: "set"
+        # You can set the hugepage_count per host in host_vars if you have different NFX models, such as the NFX150,
+        # NFX250, or NFX350
+        lines:
+          - "set system memory hugepages page-size 1024 page-count {{ hugepage_count }}"
+        comment: "Set hugepage count with Ansible"
+      register: hugepages_result
+      when: hugepage_count is defined
+
+    - name: "Ensure device is rebooted"
+      juniper.device.system:
+        action: "reboot"
+        vmhost: true
+      when: hugepages_result.changed
+
+    - name: "Wait for device to come back online"
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 830
+        timeout: 600
+        delay: 60
+      when: hugepages_result.changed
+
+- name: "Manage lifecycle of VNFs"
+  ansible.builtin.import_playbook: manage_vnfs.yml

@@ -1,0 +1,40 @@
+system {
+    replace:
+    name-server {
+    {% for server in name_servers %}
+        {{ server }} routing-instance mgmt_junos;
+    {% endfor %}
+    }
+    replace: 
+    syslog {
+        archive {
+            size 100k;
+            files 3;
+        }
+        user * {
+            any emergency;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+    }
+    replace:
+    ntp {
+    {% for server in ntp_servers %}
+        server {{ server }} routing-instance mgmt_junos;
+    {% endfor %}
+    }
+}
+interfaces {
+    lo0 {
+        unit 0 {
+            family inet {
+                address 127.0.0.1/32;
+            }
+        }
+    }
+}

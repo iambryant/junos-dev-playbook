@@ -1,0 +1,70 @@
+replace:
+virtual-network-functions {{ virtual_network_function.name }} {
+    image {
+        /var/public/{{ virtual_network_function.name }}.qcow2;
+    }
+    virtual-cpu {
+{% if virtual_network_function.vcpu_mapping is defined %}
+{% for vcpu in virtual_network_function.vcpu_mapping %}
+        {{ vcpu.virtual_cpu }} {
+            physical-cpu {{ vcpu.physical_cpu }};
+        }
+{% endfor %}
+{% endif %}
+        count {{ virtual_network_function.vcpu_count }};
+{% if virtual_network_function.hardware_virtualization | default(false) %}
+        features {
+            hardware-virtualization;
+        }
+{% endif %}
+    }
+{# Set to true if defining eth0 and eth1 manually #}
+{% if virtual_network_function.no_default_interfaces | default(false) %}
+    no-default-interfaces;
+{% endif %}
+{# This block handles the management interfaces and management type #}
+{% for interface in virtual_network_function.interfaces if (interface.usage == "internal" or interface.usage == "out-of-band") %}
+    interfaces {{ interface.name }} {
+        management {{ interface.usage }};
+    }
+{% endfor %}
+{# This block handles revenue interfaces; set to vlan if using DPDK or hsxe0/1 if using SR-IOV #}
+{# Need add support for hsxe interfaces beyond 0 and 1 #}
+{% for interface in virtual_network_function.interfaces if (interface.usage == "vlan" or interface.usage == "hsxe0" or interface.usage == "hsxe1") %}
+    interfaces {{ interface.name }} {
+        mapping {
+            {{ interface.usage }} {
+{% if interface.usage == "vlan" %}
+                mode {{ interface.mode }};
+                members {{ interface.vlan_name }};
+{% else %}
+                virtual-function {
+                    vlan-id {{ interface.vlan_name }};
+                }
+{% endif %}
+            }
+        }
+    }
+{% endfor %}
+    memory {
+        size {{ virtual_network_function.memory }};
+{% if virtual_network_function.hugepage %}        features {
+            hugepages {
+                page-size 1024;
+            }
+        }
+{% endif %}
+    }
+    storage vdb {
+        type {
+            cdrom {
+                source {
+                    file /var/public/{{ virtual_network_function.name }}.iso;
+                }
+            }
+        }
+    }
+{% if virtual_network_function.no_autostart | default(false) %}
+    no-autostart;
+{% endif %}
+}

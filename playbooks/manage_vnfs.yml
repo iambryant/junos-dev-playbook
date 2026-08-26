@@ -1,0 +1,34 @@
+---
+- name: "Manage virtual network functions"
+  hosts: nfx
+  connection: juniper.device.pyez
+  gather_facts: false
+  vars:
+    # File transfers to network appliances can be slow; tried using the dedicated `timeout` parameter for the 
+    # juniper.device.file_copy module, but it didn't seem to work
+    ansible_command_timeout: 300
+  tasks:
+    - name: "Ensure Ubuntu 26 cloud image is downloaded"
+      ansible.builtin.get_url:
+        url: "https://cloud-images.ubuntu.com/releases/resolute/release/ubuntu-26.04-server-cloudimg-amd64.img"
+        dest: "/tmp/ubuntu-26.04-server-cloudimg-amd64.img"
+        mode: '0644'
+      run_once: true
+
+    - name: "Ensure VNFs are created"
+      ansible.builtin.include_tasks: tasks/create_vnf.yml
+      loop: "{{ vnf_instances }}"
+      loop_control:
+        loop_var: vnf_instance
+      when:
+        - vnf_instances is defined
+        - (not vnf_instance.absent | default(false))
+
+    - name: "Ensure VNFs are deleted"
+      ansible.builtin.include_tasks: tasks/delete_vnf.yml
+      loop: "{{ vnf_instances }}"
+      loop_control:
+        loop_var: vnf_instance
+      when:
+        - vnf_instances is defined
+        - (vnf_instance.absent | default(false))
