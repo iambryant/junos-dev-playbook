@@ -1,5 +1,5 @@
 ---
-- name: "Check if VNF {{ vnf_instance.name }} already exists"
+- name: "Check if VNF already exists before creating"
   juniper.device.command:
     commands:
       - "show virtual-network-functions {{ vnf_instance.name }}"
@@ -7,11 +7,13 @@
   register: vnf_check
 
 - name: "Ensure VNF is created if it doesn't already exist"
+  when: vnf_check.parsed_output['vnf-information'][0] | length == 0
   block:
     - name: "Ensure VNF QCOW2 disk is created"
       ansible.builtin.copy:
         src: "/tmp/ubuntu-26.04-server-cloudimg-amd64.img"
         dest: "/tmp/{{ vnf_instance.name }}.qcow2"
+        mode: '0644'
 
     - name: "Ensure UUID is generated"
       ansible.builtin.command: uuidgen
@@ -82,4 +84,3 @@
         - "user-data"
       loop_control:
         loop_var: "vnf_file_tmp"
-  when: vnf_check.parsed_output['vnf-information'][0] | length == 0

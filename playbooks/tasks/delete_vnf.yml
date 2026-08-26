@@ -1,5 +1,5 @@
 ---
-- name: "Check if VNF {{ vnf_instance.name }} already exists"
+- name: "Check if VNF already exists before deleting"
   juniper.device.command:
     commands:
       - "show virtual-network-functions {{ vnf_instance.name }}"
@@ -7,6 +7,7 @@
   register: vnf_check
 
 - name: "Ensure VNF is deleted if it already exists"
+  when: vnf_check.parsed_output['vnf-information'][0] | length > 0
   block:
     - name: "Ensure VNFs are deleted"
       juniper.device.config:
@@ -21,4 +22,3 @@
           - "file delete /var/public/{{ vnf_instance.name }}.qcow2"
           - "file delete /var/public/{{ vnf_instance.name }}.iso"
         formats: "json"
-  when: vnf_check.parsed_output['vnf-information'][0] | length > 0
