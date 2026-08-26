@@ -109,9 +109,9 @@ Based on my experience with the NFX line, it means this:
 - `eth0` is used as the default management interface for the VNF and is accessible through the management interface of
   the NFX itself.
   For example, if your NFX is connected to a management network on `fxp0`, network traffic for `eth0` will be sent
-  through that interface. I haven't tested if it's bound to the fxp0 interface specifically, or any interface the NFX
-  uses for management, such as a front panel interface or an `irb` interface. I assume it's the former. It is known as
-  the `out-of-band` management interface.
+  through the `fxp0` interface. I haven't tested if it's bound to the fxp0 interface specifically, or any interface
+  the NFX uses for management, such as a front panel interface or an `irb` interface. I assume it's the former. It is known
+  as the `out-of-band` management interface.
 
 - `eth1` maps to an internal subnet on the NFX that is used if you use `request virtual-network-function telnet <vnf-name>`
   or `request virtual-network-function ssh <vnf-name>` to try to access a VNF. From testing, the allocated subnet is
