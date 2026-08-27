@@ -1,4 +1,8 @@
 ---
 collections:
+  - name: iambryant.junos
+    source: https://github.com/iambryant/ansible-collection-junos
+    type: git
+
   - name: juniper.device
     version: 2.0.4

@@ -28,6 +28,3 @@
         timeout: 600
         delay: 60
       when: hugepages_result.changed
-
-- name: "Manage lifecycle of VNFs"
-  ansible.builtin.import_playbook: manage_vnfs.yml

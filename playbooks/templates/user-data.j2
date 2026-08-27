@@ -1,6 +1,0 @@
-#cloud-config
-hostname: {{ vnf_instance.name }}
-manage_etc_hosts: true
-fqdn: {{ vnf_instance.name }}.{{ vnf_instance.domain }}
-
-{{ vnf_instance.user_data | to_nice_yaml(indent=2) }}
