@@ -15,13 +15,13 @@
       register: hugepages_result
       when: hugepage_count is defined
 
-    - name: "Ensure device is rebooted"
+    - name: "Ensure device is rebooted" # noqa: no-handler
       juniper.device.system:
         action: "reboot"
         vmhost: true
       when: hugepages_result.changed
 
-    - name: "Wait for device to come back online"
+    - name: "Wait for device to come back online" # noqa: no-handler
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
         port: 830

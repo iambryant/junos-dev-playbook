@@ -1,5 +1,6 @@
 ---
 - name: "Manage virtual network functions"
+  strategy: linear
   hosts: nfx
   connection: juniper.device.pyez
   gather_facts: false
