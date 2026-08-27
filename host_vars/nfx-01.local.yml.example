@@ -6,6 +6,7 @@ hugepage_count: 10
 
 vnf_instances:
   - name: "ubuntu-01"
+    domain: "local"
     vcpu_count: 2
     memory: 8388608
     vcpu_mapping:
@@ -15,9 +16,30 @@ vnf_instances:
         physical_cpu: 8
     hardware_virtualization: true
     hugepage: true
+    no_default_interfaces: true
     interfaces:
-      - name: "eth2"
+      - name: "eth0"
         usage: "vlan"
         mode: "access"
         vlan_name: "default"
     no_autostart: true
+
+    user_data:
+      chpasswd:
+        expire: False
+      users:
+        - name: admin
+          gecos: Management user
+          shell: /bin/bash
+          ssh_authorized_keys:
+            - <ssh_key_here>
+          sudo: "ALL=(ALL) NOPASSWD:ALL"
+      package_upgrade: true
+
+    network_config:
+      version: 1
+      config:
+        - type: physical
+          name: ens3
+          subnets:
+            - type: dhcp
