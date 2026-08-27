@@ -194,9 +194,3 @@ Based on my experience with the NFX line, it means this:
 ## License
 
 MIT
-
-## Acknowledgements
-
-Credit goes to [laurent-jnpr](https://github.com/laurent-jnpr); I used elements from a template in their repository
-[VNF-on-Juniper-NFX-with-Ansible](https://github.com/Juniper-SE/VNF-on-Juniper-NFX-with-Ansible) to build the VNF
-creation template.
