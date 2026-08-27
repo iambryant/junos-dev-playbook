@@ -28,7 +28,7 @@ The playbooks in this repository were tested on the following Junos OS versions:
   - NFX: JUNOS 24.2
   - QFX: JUNOS 21.4
   - SRX: JUNOS 23.4
-  - vSRX (3.0): Junos 23.4
+  - vSRX (3.0): JUNOS 23.4
 
 ## Notes
 

@@ -5,10 +5,10 @@
 ex-01.local
 
 [nfx]
-nfx-01.local
+nfx-01.local ansible_host=192.168.1.10
 
 [srx]
-srx-01.local
+srx-01.local ansible_host=192.168.1.11
 
 [qfx]
 qfx-01.local
