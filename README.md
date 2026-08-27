@@ -148,7 +148,7 @@ Based on my experience with the NFX line, it means this:
   Are you sure you want to continue connecting (yes/no/[fingerprint])?
   ```
 
-- `eth2` and onward are interfaces that you can do with as you please. Technically, you can assign the `out-of-band` or
+- `eth2` and onward are interfaces that you can configure as needed. Technically, you can assign the `out-of-band` or
   `internal` designations to them from the edit hierarchy, if you need more management interfaces. Typically, you would
   map `eth2` and onward interfaces to front panel interfaces using either the `vlan` method or `SR-IOV` method.
 
