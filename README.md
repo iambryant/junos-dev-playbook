@@ -152,6 +152,9 @@ Based on my experience with the NFX line, it means this:
   `internal` designations to them from the edit hierarchy, if you need more management interfaces. Typically, you would
   map `eth2` and onward interfaces to front panel interfaces using either the `vlan` method or `SR-IOV` method.
 
+- If you don't want Junos to allocate any default interfaces, you can set `no-default-interfaces` under the VNF from
+  the edit heirarchy and map interfaces as needed.
+
 > [!IMPORTANT]
 > Do not assume that `eth0` maps to the first available interface in the VNF, `eth1` maps to the second available
 > interface in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
