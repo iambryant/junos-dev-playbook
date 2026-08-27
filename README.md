@@ -156,7 +156,7 @@ Based on my experience with the NFX line, it means this:
   the edit heirarchy and map interfaces as needed.
 
 > [!IMPORTANT]
-> Do not assume that `eth0` maps to the first available interface in the VNF, `eth1` maps to the second available
+> Do not assume that `eth0` always maps to the first available interface in the VNF, `eth1` maps to the second available
 > interface in the VNF, and so on. When testing interfaces inside a VNF, the interfaces were mapped as so:
 > ```text
 > admin@ubuntu-01:~$ ip a
