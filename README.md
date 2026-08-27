@@ -22,6 +22,14 @@ collection and requires the following packages on the control node:
 You can install the Python libraries with the `requirements.txt` in this repository using 
 `pip3 install -r requirements.txt`.
 
+The playbooks in this repository were tested on the following Junos OS versions:
+
+  - EX: JUNOS 21.4
+  - NFX: JUNOS 24.2
+  - QFX: JUNOS 21.4
+  - SRX: JUNOS 23.4
+  - vSRX (3.0): Junos 23.4
+
 ## Notes
 
 The following notes are oddities/issues I've encountered while developing playbooks for Juniper platforms or issues in
@@ -109,9 +117,9 @@ Based on my experience with the NFX line, it means this:
 - `eth0` is used as the default management interface for the VNF and is accessible through the management interface of
   the NFX itself.
   For example, if your NFX is connected to a management network on `fxp0`, network traffic for `eth0` will be sent
-  through the `fxp0` interface. I haven't tested if it's bound to the fxp0 interface specifically, or any interface
-  the NFX uses for management, such as a front panel interface or an `irb` interface. I assume it's the former. It is known
-  as the `out-of-band` management interface.
+  through the `fxp0` interface. I haven't tested if it's bound to the `fxp0` interface specifically, or any interface
+  the NFX uses for management, such as a front panel interface or an `irb` interface. I assume it's the former. It is
+  known as the `out-of-band` management interface.
 
 - `eth1` maps to an internal subnet on the NFX that is used if you use `request virtual-network-function telnet <vnf-name>`
   or `request virtual-network-function ssh <vnf-name>` to try to access a VNF. From testing, the allocated subnet is
