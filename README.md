@@ -187,9 +187,9 @@ Based on my experience with the NFX line, it means this:
 >     inet6 fe80::2e21:31ff:fe5f:c122/64 scope link proto kernel_ll 
 >        valid_lft forever preferred_lft forever
 > ```
-> As per the output, we can see that `eth1` was mapped to the first interface, `ens3`. `eth1` being the internal 
-> management network, and that `eth0`, the interface for the `out-of-band` management network was not the first
-> interface to be mapped. 
+> As per the output, we can see that `eth1` (the interface for the internal management network) was mapped to the first
+> interface (`ens3`), and that `eth0` (the interface for the out-of-band management network) was not the first interface
+> to be mapped.
 
 ## License
 
