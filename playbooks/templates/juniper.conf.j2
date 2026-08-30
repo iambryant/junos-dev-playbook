@@ -1,14 +1,14 @@
 system {
     host-name {{ host_name }};
     root-authentication {
-        encrypted-password "{{ root_authentication }}";
+        encrypted-password "{{ root_authentication | trim }}";
     }
     login {
 {% for user in login_users %}
         user {{ user.name }} {
             class {{ user.class }};
             authentication {
-                {{ user.authentication_type }} "{{ user.authentication_value }}";
+                {{ user.authentication_type }} "{{ user.authentication_value | trim }}";
             }
         }
 {% endfor %}
