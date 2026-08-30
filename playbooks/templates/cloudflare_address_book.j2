@@ -1,0 +1,65 @@
+security {
+    address-book {
+        global {
+            replace:
+            {% for ip in cloudflare_cidr_blocks_ipv4 %}
+            address CF_{{ ip | replace('.', '_') | replace('/', '_') }} {{ ip }};
+            {% endfor %}
+
+            {% for ip in cloudflare_cidr_blocks_ipv6 %}
+            address CF_{{ ip | replace(':', '_') | replace('/', '_') }} {{ ip }};
+            {% endfor %}
+
+            address-set cloudflare_ipv4 {
+                {% for ip in cloudflare_cidr_blocks_ipv4 %}
+                address CF_{{ ip | replace('.', '_') | replace('/', '_') }};
+                {% endfor %}
+            }
+
+            address-set cloudflare_ipv6 {
+                {% for ip in cloudflare_cidr_blocks_ipv6 %}
+                address CF_{{ ip | replace(':', '_') | replace('/', '_') }};
+                {% endfor %}
+            }
+        }
+    }
+    policies {
+        from-zone UNTRUST to-zone DMZ-SRV {
+            policy CLOUDFLARE-WEB-ACCESS {
+                match {
+                    source-address [ cloudflare_ipv4 cloudflare_ipv6 ];
+                    destination-address DMZ-SRV-SUBNET;
+                    application [ junos-http junos-https GITHUB-WEBHOOK ];
+                }
+                then {
+                    permit;
+                }
+            }
+        }
+    }
+    nat {
+        destination {
+            rule-set UNTRUST-DNAT {
+                replace: rule CLOUDFLARE-WEB-ACCESS {
+                    match {
+                        source-address-name cloudflare_ipv4;
+                        destination-address 0.0.0.0/0; 
+                        destination-port {
+                            80;
+                            443;
+                            9000;
+                        }
+                        protocol tcp;
+                    }
+                    then {
+                        destination-nat {
+                            pool {
+                                POOL-DMZ-WEB;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

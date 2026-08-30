@@ -1,0 +1,44 @@
+---
+- name: "Ensure SRX firewalls are configured"
+  hosts: srx
+  strategy: linear
+  connection: juniper.device.pyez
+  gather_facts: false
+  tasks:
+    - name: "Fetch Cloudflare's CIDR blocks (IPv4)"
+      ansible.builtin.uri:
+        url: https://www.cloudflare.com/ips-v4
+        method: GET
+        return_content: true
+      register: cloudflare_cidr_blocks_ipv4_raw
+      run_once: true
+
+    - name: "Fetch Cloudflare's CIDR blocks (IPv6)"
+      ansible.builtin.uri:
+        url: https://www.cloudflare.com/ips-v6
+        method: GET
+        return_content: true
+      register: cloudflare_cidr_blocks_ipv6_raw
+      run_once: true
+
+    - name: "Set Cloudflare CIDR blocks as facts"
+      ansible.builtin.set_fact:
+        cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4_raw.content.splitlines() }}"
+        cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6_raw.content.splitlines() }}"
+
+    - name: "Ensure Cloudflare rules are configured"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        template: "{{ playbook_dir }}/templates/cloudflare_address_book.j2"
+        comment: "Configured CLOUDFLARE_BOOK address sets with Ansible"
+        vars:
+          cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4 }}"
+          cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6 }}"
+
+    - name: "Ensure IBM i rules are configured"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        src: "{{ playbook_dir }}/files/ibm_i_applications.conf"
+        comment: "Configured IBM i application sets with Ansible"

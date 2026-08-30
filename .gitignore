@@ -1,5 +1,7 @@
 ansible.cfg
 collections/
+playbooks/files/*
+!playbooks/files/*-base.yml
 group_vars/*.yml
 host_vars/*.yml
 inventory
