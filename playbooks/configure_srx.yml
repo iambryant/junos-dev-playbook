@@ -5,7 +5,7 @@
   connection: juniper.device.pyez
   gather_facts: false
   tasks:
-    - name: "Fetch Cloudflare's CIDR blocks (IPv4)"
+    - name: "Fetch Cloudflare's CIDR blocks (IPv4)" # noqa: run-once[task]
       ansible.builtin.uri:
         url: https://www.cloudflare.com/ips-v4
         method: GET
@@ -13,7 +13,7 @@
       register: cloudflare_cidr_blocks_ipv4_raw
       run_once: true
 
-    - name: "Fetch Cloudflare's CIDR blocks (IPv6)"
+    - name: "Fetch Cloudflare's CIDR blocks (IPv6)" # noqa: run-once[task]
       ansible.builtin.uri:
         url: https://www.cloudflare.com/ips-v6
         method: GET
