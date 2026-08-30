@@ -2,13 +2,13 @@
 # hostname for connecting to devices
 
 [ex]
-ex-01.local
+ex-01.local ansible_host=192.168.1.10
 
 [nfx]
-nfx-01.local ansible_host=192.168.1.10
+nfx-01.local ansible_host=192.168.1.11
 
 [srx]
-srx-01.local ansible_host=192.168.1.11
+srx-01.local ansible_host=192.168.1.12
 
 [qfx]
-qfx-01.local
+qfx-01.local ansible_host=192.168.1.13

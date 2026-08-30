@@ -1,3 +1,2 @@
 ---
-management_ip: "192.168.1.11/24"
-management_gateway: "192.168.1.1"
+management_ip: "{{ ansible_host }}/24"

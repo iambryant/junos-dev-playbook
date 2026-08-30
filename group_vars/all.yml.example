@@ -10,6 +10,8 @@ system_login_users:
     # Plaintext: test123
     authentication_value: "$6$E2YCaP1Z4h30.nKy$YxS6uOV9sVplHYBpAbjaKHJWyV0jeWQTnKnc2X2VEhNrm0JYX0tS44c6SdRi0RTa9t6Uyxpek98cHgT4DsKff/"
 
+management_gateway: "192.168.1.1"
+
 system_name_servers:
   - 8.8.4.4 # dns.google
   - 8.8.8.8 # dns.google
