@@ -1,3 +1,9 @@
+applications {
+    application GITHUB-WEBHOOK {
+        protocol tcp;
+        destination-port 9000;
+    }
+}
 security {
     address-book {
         global {
