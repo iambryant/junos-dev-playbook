@@ -29,7 +29,7 @@
 
     - name: "Check if device-family-specific base configuration file exists"
       ansible.builtin.stat:
-        path: "{{ playbook_dir }}/files/{{ device_family }}-base.conf"
+        path: "{{ playbook_dir }}/templates/{{ device_family }}-base.conf.j2"
       register: device_family_configuration
 
     - name: "Ensure device-family-specific base configuration is present"
@@ -37,8 +37,10 @@
         load: "replace"
         format: "text"
         # Change to file or template depending on if you're using a template or static config file
-        src: "{{ playbook_dir }}/files/{{ device_family }}-base.conf"
+        template: "{{ playbook_dir }}/templates/{{ device_family }}-base.conf.j2"
         comment: "Loaded device-specific base configuration with Ansible"
+        vars:
+          hugepage_count: "{{ system_hugepage_count }}"
       when: device_family_configuration.stat.exists
 
     - name: "Check if host-specific configuration file exists"
@@ -57,6 +59,3 @@
 
 - name: "Ensure SRX firewalls are configured"
   ansible.builtin.import_playbook: configure_srx.yml
-
-- name: "Ensure NFX hypervisors are configured"
-  ansible.builtin.import_playbook: configure_nfx.yml

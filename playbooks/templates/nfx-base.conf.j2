@@ -10,7 +10,15 @@ groups {
         }
     }
 }
-
+system {
+    memory {
+        hugepages {
+            page-size 1024 {
+                page-count {{ hugepage_count }};
+            }
+        }
+    }
+}
 interfaces {
     apply-groups NFX-SXE-DEFAULT;
 }
