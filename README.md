@@ -37,6 +37,28 @@ general. I'm hoping if someone encounters a similar issue that they might be abl
 raise an issue in the repository if you believe any information provided here is outdated or inaccurate, so that it
 benefits others:
 
+### ACX Management Interfaces
+
+More often than not, Juniper guides can be incorrect or have typos. For example, Juniper's guide [here](https://www.juniper.net/documentation/us/en/software/junos/interfaces-ethernet/topics/topic-map/management-ethernet-interfaces.html)
+says the following concerning management interfaces on the `ACX Series`:
+
+- ACX Series routers that support management interface uses em0 as the management port for Junos OS platforms.
+- ACX Series routers that support management interface uses re0:mgmt-0 as the management port for Junos Evolved platforms.
+
+Technically, this information is not correct. Linked below are guides for the following models:
+
+- [ACX 500](https://www.juniper.net/documentation/en_US/release-independent/junos/information-products/topic-collections/hardware/acx-series/acx500/quick-start/acx500-quick-start.pdf)
+- [ACX 1000 and ACX1100](https://www.juniper.net/documentation/us/en/hardware/acx1000/topics/task/acx1000-initial.html)
+- [ACX2000 and ACX2100](https://www.juniper.net/documentation/us/en/hardware/qsg/acx2000-acx2100/topics/task/acx2000-acx2100-step-6.html)
+- [ACX4000](https://www.juniper.net/documentation/us/en/hardware/acx4000/acx4000.pdf)
+
+All of them mention configuring the management port as `fxp0`, not `em0`. I have tested this myself on an ACX2100 where
+`em0` was present, but so was `fxp0`, and management traffic would only reach the router when `fxp0` was configured.
+
+It seems that the only ACX Series that actually use `em0` as its management port are the `5000` and `6000` series. If you go
+any higher, to something like the `7000` series, those run Junos OS evolved anyway, which uses `re0:mgmt-0` as the table says
+(except for the `ACX 710`, which only runs regular Junos OS and uses `em0`).
+
 ### VNF CPU Allocation
 
 Looking at Juniper's [official documentation](https://www.juniper.net/documentation/us/en/software/junos/nfx250-getting-started/topics/topic-map/nfx250-ng-overview.html),
