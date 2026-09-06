@@ -1,0 +1,71 @@
+applications {
+    application GITHUB-WEBHOOK {
+        protocol tcp;
+        destination-port 9000;
+    }
+}
+security {
+    address-book {
+        global {
+            replace:
+            {% for ip in cloudflare_cidr_blocks_ipv4 %}
+            address CF-{{ ip | replace('.', '-') | replace('/', '-') }} {{ ip }};
+            {% endfor %}
+
+            {% for ip in cloudflare_cidr_blocks_ipv6 %}
+            address CF-{{ ip | replace(':', '-') | replace('/', '-') }} {{ ip }};
+            {% endfor %}
+
+            address-set CLOUDFLARE-IPV4 {
+                {% for ip in cloudflare_cidr_blocks_ipv4 %}
+                address CF-{{ ip | replace('.', '-') | replace('/', '-') }};
+                {% endfor %}
+            }
+            address-set CLOUDFLARE-IPV6 {
+                {% for ip in cloudflare_cidr_blocks_ipv6 %}
+                address CF-{{ ip | replace(':', '-') | replace('/', '-') }};
+                {% endfor %}
+            }
+        }
+    }
+    policies {
+        from-zone UNTRUST to-zone DMZ-SRV {
+            replace:
+            policy CLOUDFLARE-WEB-INBOUND {
+                match {
+                    source-address [ CLOUDFLARE-IPV4 CLOUDFLARE-IPV6 ];
+                    destination-address DMZ-SRV-SUBNET;
+                    application [ junos-http junos-https GITHUB-WEBHOOK ];
+                }
+                then {
+                    permit;
+                }
+            }
+        }
+    }
+    nat {
+        destination {
+            rule-set UNTRUST-DNAT {
+                replace: rule CLOUDFLARE-WEB-INBOUND {
+                    match {
+                        source-address-name CLOUDFLARE-IPV4;
+                        destination-address 0.0.0.0/0; 
+                        destination-port {
+                            80;
+                            443;
+                            9000;
+                        }
+                        protocol tcp;
+                    }
+                    then {
+                        destination-nat {
+                            pool {
+                                POOL-DMZ-WEB;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
