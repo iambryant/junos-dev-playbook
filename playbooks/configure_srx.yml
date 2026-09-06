@@ -26,12 +26,12 @@
         cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4_raw.content.splitlines() }}"
         cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6_raw.content.splitlines() }}"
 
-    - name: "Ensure Cloudflare rules are configured"
+    - name: "Ensure Cloudflare firewall rules are configured"
       juniper.device.config:
         load: "replace"
         format: "text"
-        template: "{{ playbook_dir }}/templates/cloudflare_address_book.j2"
-        comment: "Configured CLOUDFLARE_BOOK address sets with Ansible"
+        template: "{{ playbook_dir }}/templates/cloudflare_rules.j2"
+        comment: "Configured Cloudflare firewall rules with Ansible"
         vars:
           cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4 }}"
           cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6 }}"
@@ -42,3 +42,13 @@
         format: "text"
         src: "{{ playbook_dir }}/files/ibm_i_applications.conf"
         comment: "Configured IBM i application sets with Ansible"
+
+    - name: "Ensure infrastructure firewall rules are configured"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        template: "{{ playbook_dir }}/templates/infrastructure_rules.j2"
+        comment: "Configured infrastructure firewall rules with Ansible"
+        vars:
+          name_servers: "{{ system_name_servers }}"
+          ntp_servers: "{{ system_ntp_servers }}"

@@ -1,0 +1,77 @@
+security {
+    address-book {
+        global {
+            replace:
+            address NS-01-INFRA {{ name_servers[0] }};
+            address NS-02-INFRA {{ name_servers[1] }};
+            address NTP-01-INFRA {{ ntp_servers[0] }};
+            address NTP-02-INFRA {{ ntp_servers[1] }};
+            address GOOGLE-8-8-4-4-32 8.8.4.4/32;
+            address GOOGLE-8-8-8-8-32 8.8.8.8/32;
+            address GOOGLE-2001-4860-4860--8844-128 2001:4860:4860::8844/128;
+            address GOOGLE-2001-4860-4860--8888-128 2001:4860:4860::8888/128;
+            address NIST-129-6-15-27-32 129.6.15.27/32;
+            address NIST-129-6-15-26-32 129.6.15.26/32;
+            address NIST-132-163-97-4-32 132.163.97.4/32;
+            address NIST-132-163-96-4-32 132.163.96.4/32;
+            address NIST-2610-20-6f15-15--27-128 2610:20:6f15:15::27/128;
+            address NIST-2610-20-6f15-15--26-128 2610:20:6f15:15::26/128;
+            address NIST-2610-20-6f97-97--4-128 2610:20:6f97:97::4/128;
+            address NIST-2610-20-6f96-96--4-128 2610:20:6f96:96::4/128;
+            address-set INFRA-SRV-DNS {
+                address NS-01-INFRA;
+                address NS-02-INFRA;
+            }
+            address-set INFRA-SRV-NTP {
+                address NTP-01-INFRA;
+                address NTP-02-INFRA;
+            }
+            address-set GOOGLE-DNS-IPV4 {
+                address GOOGLE-8-8-4-4-32;
+                address GOOGLE-8-8-8-8-32;
+            }
+            address-set GOOGLE-DNS-IPV6 {
+                address GOOGLE-2001-4860-4860--8844-128;
+                address GOOGLE-2001-4860-4860--8888-128;
+            }
+            address-set NIST-NTP-IPV4 {
+                address NIST-129-6-15-27-32;
+                address NIST-129-6-15-26-32;
+                address NIST-132-163-97-4-32;
+                address NIST-132-163-96-4-32;
+            }
+            address-set NIST-NTP-IPV6 {
+                address NIST-2610-20-6f15-15--27-128;
+                address NIST-2610-20-6f15-15--26-128;
+                address NIST-2610-20-6f97-97--4-128;
+                address NIST-2610-20-6f96-96--4-128;
+            }
+        }
+    }
+    policies {
+        from-zone INFRA-SRV to-zone UNTRUST {
+            replace:
+            policy INFRA-SRV-DNS-OUTBOUND {
+                match {
+                    source-address INFRA-SRV-DNS;
+                    destination-address [ GOOGLE-DNS-IPV4 GOOGLE-DNS-IPV6 ];
+                    application [ junos-dns-udp junos-dns-tcp ];
+                }
+                then {
+                    permit;
+                }
+            }
+            replace:
+            policy INFRA-SRV-NTP-OUTBOUND {
+                match {
+                    source-address INFRA-SRV-NTP;
+                    destination-address [ NIST-NTP-IPV4 NIST-NTP-IPV6 ];
+                    application [ junos-ntp ];
+                }
+                then {
+                    permit;  
+                }
+            }
+        }
+    }
+}
