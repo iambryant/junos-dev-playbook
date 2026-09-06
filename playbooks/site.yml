@@ -29,7 +29,7 @@
 
     - name: "Check if device-family-specific base configuration file exists"
       ansible.builtin.stat:
-        path: "{{ playbook_dir }}/templates/{{ device_family }}-base.conf.j2"
+        path: "{{ playbook_dir }}/templates/{{ device_family }}_base.conf.j2"
       register: device_family_configuration
 
     - name: "Ensure device-family-specific base configuration is present"
@@ -37,7 +37,7 @@
         load: "replace"
         format: "text"
         # Change to file or template depending on if you're using a template or static config file
-        template: "{{ playbook_dir }}/templates/{{ device_family }}-base.conf.j2"
+        template: "{{ playbook_dir }}/templates/{{ device_family }}_base.conf.j2"
         comment: "Loaded device-specific base configuration with Ansible"
         vars:
           hugepage_count: "{{ system_hugepage_count | default(omit) }}" # Only NFX family uses this
