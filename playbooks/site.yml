@@ -27,6 +27,23 @@
           name_servers: "{{ system_name_servers }}"
           ntp_servers: "{{ system_ntp_servers }}"
 
+    - name: "Check if device-family-specific configuration file that requires reboot exists"
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/templates/{{ device_family }}_reboot.conf.j2"
+      register: device_family_reboot_configuration
+
+    - name: "Ensure device-family-specific configuration that requires reboot is present"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        # Change to file or template depending on if you're using a template or static config file
+        template: "{{ playbook_dir }}/templates/{{ device_family }}_reboot.conf.j2"
+        comment: "Loaded device-specific base configuration that requires reboot with Ansible"
+        vars:
+          hugepage_count: "{{ system_hugepage_count | default(omit) }}" # Only NFX family uses this
+      notify: "Reboot device"
+      when: device_family_reboot_configuration.stat.exists
+
     - name: "Check if device-family-specific base configuration file exists"
       ansible.builtin.stat:
         path: "{{ playbook_dir }}/templates/{{ device_family }}_base.conf.j2"
@@ -43,6 +60,21 @@
           hugepage_count: "{{ system_hugepage_count | default(omit) }}" # Only NFX family uses this
       when: device_family_configuration.stat.exists
 
+    - name: "Check if host-specific configuration file that requires reboot exists"
+      ansible.builtin.stat:
+        path: "{{ playbook_dir }}/files/{{ inventory_hostname }}_reboot.conf"
+      register: host_reboot_configuration
+
+    - name: "Ensure host-specific configuration that requires reboot is present"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        # Change to file or template depending on if you're using a template or static config file
+        src: "{{ playbook_dir }}/files/{{ inventory_hostname }}_reboot.conf"
+        comment: "Loaded host-specific reboot configuration with Ansible"
+      notify: "Reboot device"
+      when: host_reboot_configuration.stat.exists
+
     - name: "Check if host-specific configuration file exists"
       ansible.builtin.stat:
         path: "{{ playbook_dir }}/files/{{ inventory_hostname }}.conf"
@@ -56,6 +88,28 @@
         src: "{{ playbook_dir }}/files/{{ inventory_hostname }}.conf"
         comment: "Loaded device-specific base configuration with Ansible"
       when: host_configuration.stat.exists
+
+  handlers:
+    - name: "Ensure device is rebooted"
+      juniper.device.system:
+        action: "reboot"
+         # Needs to be set manually per host/group since juniper.device.facts incorrectly reports vmhost: false when
+         # tested on vmhost devices such as the NFX or QFX
+         # You can choose to set this per-host in host_vars if the device uses a vmhost architecture, such as the SRX1500
+         # while not affecting non vmhost SRXes like an SRX340
+        vmhost: "{{ juniper_vmhost | default(device_family in ['nfx', 'qfx']) }}"
+      # Templating the vmhost parameter causes the module to lose proper connection-tracking state, throwing a 
+      # 'ConnectClosedError' prematurely even though the reboot succeeds. ignore_errors is used here as a workaround
+      ignore_errors: true
+      listen: "Reboot device"
+
+    - name: "Wait for device to come back online"
+      ansible.builtin.wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 830
+        timeout: 600
+        delay: 60
+      listen: "Reboot device"
 
 - name: "Ensure SRX firewalls are configured"
   ansible.builtin.import_playbook: configure_srx.yml
