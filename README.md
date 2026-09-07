@@ -107,7 +107,7 @@ However, a task like this will run perfectly fine:
       - "show system uptime"
 ```
 
-To avoid this, I've been adding the following to the task:
+To avoid this, I've been adding the following to tasks that use the `juniper.device.command` module:
 
 ```yaml
 formats: "json"
