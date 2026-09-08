@@ -46,6 +46,7 @@ security {
     nat {
         destination {
             rule-set UNTRUST-DNAT {
+                from zone UNTRUST;
                 replace: rule CLOUDFLARE-WEB-INBOUND {
                     match {
                         source-address-name CLOUDFLARE-IPV4;
