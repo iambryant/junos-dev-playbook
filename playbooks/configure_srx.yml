@@ -38,10 +38,6 @@
         cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4_raw.content.splitlines() }}"
         cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6_raw.content.splitlines() }}"
 
-    - name: Preview rendered configuration
-      ansible.builtin.debug:
-        msg: "{{ lookup('template', 'cloudflare_rules.j2') }}"
-
     - name: "Ensure Cloudflare firewall rules are configured"
       juniper.device.config:
         load: "replace"
