@@ -4,7 +4,19 @@
   strategy: linear
   connection: juniper.device.pyez
   gather_facts: false
+  vars:
+    ansible_command_timeout: 300
   tasks:
+    - name: "Ensure infrastructure firewall rules are configured"
+      juniper.device.config:
+        load: "replace"
+        format: "text"
+        template: "{{ playbook_dir }}/templates/infrastructure_rules.j2"
+        comment: "Configured infrastructure firewall rules with Ansible"
+        vars:
+          name_servers: "{{ system_name_servers }}"
+          ntp_servers: "{{ system_ntp_servers }}"
+
     - name: "Fetch Cloudflare's CIDR blocks (IPv4)" # noqa: run-once[task]
       ansible.builtin.uri:
         url: https://www.cloudflare.com/ips-v4
@@ -26,6 +38,10 @@
         cloudflare_cidr_blocks_ipv4: "{{ cloudflare_cidr_blocks_ipv4_raw.content.splitlines() }}"
         cloudflare_cidr_blocks_ipv6: "{{ cloudflare_cidr_blocks_ipv6_raw.content.splitlines() }}"
 
+    - name: Preview rendered configuration
+      ansible.builtin.debug:
+        msg: "{{ lookup('template', 'cloudflare_rules.j2') }}"
+
     - name: "Ensure Cloudflare firewall rules are configured"
       juniper.device.config:
         load: "replace"
@@ -42,13 +58,3 @@
         format: "text"
         src: "{{ playbook_dir }}/files/ibm_i_applications.conf"
         comment: "Configured IBM i application sets with Ansible"
-
-    - name: "Ensure infrastructure firewall rules are configured"
-      juniper.device.config:
-        load: "replace"
-        format: "text"
-        template: "{{ playbook_dir }}/templates/infrastructure_rules.j2"
-        comment: "Configured infrastructure firewall rules with Ansible"
-        vars:
-          name_servers: "{{ system_name_servers }}"
-          ntp_servers: "{{ system_ntp_servers }}"
