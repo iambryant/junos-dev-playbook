@@ -10,7 +10,7 @@
 
     - name: "Ensure device model is set as fact"
       ansible.builtin.set_fact:
-        device_model: "{{ device_output.ansible_facts.junos.model | lower }}"
+        device_model: "{{ device_output['ansible_facts']['junos']['model'] | lower }}"
 
     - name: "Ensure device family prefix is set as fact"
       ansible.builtin.set_fact:
@@ -93,18 +93,19 @@
     - name: "Ensure device is rebooted"
       juniper.device.system:
         action: "reboot"
-         # Needs to be set manually per host/group since juniper.device.facts incorrectly reports vmhost: false when
+         # Needs to be set manually per host/group since 'juniper.device.facts' incorrectly reports vmhost: false when
          # tested on vmhost devices such as the NFX or QFX
          # You can choose to set this per-host in host_vars if the device uses a vmhost architecture, such as the SRX1500
          # while not affecting non vmhost SRXes like an SRX340
         vmhost: "{{ juniper_vmhost | default(device_family in ['nfx', 'qfx']) }}"
       # Templating the vmhost parameter causes the module to lose proper connection-tracking state, throwing a 
-      # 'ConnectClosedError' prematurely even though the reboot succeeds. ignore_errors is used here as a workaround
+      # 'ConnectClosedError' prematurely even though the reboot succeeds. 'ignore_errors' is used here as a workaround
       ignore_errors: true
       listen: "Reboot device"
 
     - name: "Wait for device to come back online"
       ansible.builtin.wait_for:
+        # Switch to 'ansible_host' if your hosts aren't in DNS
         host: "{{ inventory_hostname }}"
         port: 830
         timeout: 600
