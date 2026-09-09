@@ -21,6 +21,7 @@ system {
         }
         ssh {
             root-login deny;
+            protocol-version v2;
         }
     }
     domain-name {{ domain_name }};
