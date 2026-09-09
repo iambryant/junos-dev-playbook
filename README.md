@@ -6,6 +6,134 @@
 
 The playbooks in this repository configure my Junos OS infrastructure from the ground up.
 
+A tiered approach is used for managing hosts. Host configs are managed with files/templates, and are loaded in this order:
+
+- `juniper.conf.j2`
+- `base.conf.j2`
+- `{{ device_family}}.conf.j2` (optional)
+- `{{ inventory_hostname }}.conf.j2` (optional)
+
+`juniper.conf.j2` is the initial bootstrap configuration loaded on a new host over serial. It is applied with `bootstrap.yml`
+in `playbooks` and contains the following configuration:
+
+```
+system {
+    host-name {{ host_name }};
+    root-authentication {
+        encrypted-password "{{ root_authentication | trim }}";
+    }
+    login {
+{% for user in login_users %}
+        user {{ user.name }} {
+            class {{ user.class }};
+            authentication {
+                {{ user.authentication_type }} "{{ user.authentication_value | trim }}";
+            }
+        }
+{% endfor %}
+    }
+    services {
+        netconf {
+            ssh;
+            rfc-compliant;
+            yang-compliant;
+        }
+        ssh {
+            root-login deny;
+            protocol-version v2;
+        }
+    }
+    domain-name {{ domain_name }};
+    management-instance;
+}
+interfaces {
+    {{ mgmt_interface }} {
+        unit 0 {
+            family inet {
+                address {{ mgmt_ip }};
+            }
+        }
+    }
+}
+routing-instances {
+    mgmt_junos {
+        description "Management VRF";
+        routing-options {
+            static {
+                route 0.0.0.0/0 next-hop {{ mgmt_gateway }};
+            }
+        }
+    }
+}
+```
+
+It contains the minimum config needed to get a device ready for being managed with Ansible as well as any additional
+configuration needed for hardening the device straight out of the box.
+
+`base.conf.j2` contains base configuration that you want present on all devices, such as DNS, NTP, or logging servers, firewall
+filters, logging options, etc. The repository uses the following template:
+
+```
+system {
+    auto-snapshot;
+    dgasp-int;
+    dgasp-usb;
+    {% if name_servers %}
+    replace:
+    name-server {
+    {% for server in name_servers %}
+        {{ server }} routing-instance mgmt_junos;
+    {% endfor %}
+    }
+    {% endif %}
+    replace:
+    {# Present because we don't have a central logging server yet #}
+    syslog {
+        archive {
+            size 100k;
+            files 3;
+        }
+        user * {
+            any emergency;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+    }
+    {% if ntp_servers %}
+    replace:
+    ntp {
+    {% for server in ntp_servers %}
+        server {{ server }} routing-instance mgmt_junos;
+    {% endfor %}
+    }
+    {% endif %}
+}
+interfaces {
+    lo0 {
+        unit 0 {
+            family inet {
+                address 127.0.0.1/32;
+            }
+        }
+    }
+}
+```
+
+The next templates, `{{ device_family}}.conf.j2`, and `{{ inventory_hostname }}.conf.j2` are optional and only loaded if
+they're found to exist in the repository. `{{ device_family}}.conf.j2` is used if you have configuration you want to be applied
+to all members of a device family such as the `EX` family, `MX` family, `SRX` family, etc. `{{ inventory_hostname }}.conf.j2`
+is used for individual hosts that require configuration to only be applied to that specific host, such as interface ranges,
+security policies, you name it. 
+
+**Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases are
+different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork the
+repository. My goal is to just get the ball rolling in terms of automation on the Junos OS platform.**
+
 ## Requirements
 
 This collection uses the [juniper.device](https://galaxy.ansible.com/ui/repo/published/juniper/device/docs/)
