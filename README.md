@@ -71,7 +71,7 @@ routing-instances {
 It contains the minimum config needed to get a device ready for being managed with Ansible as well as any additional
 configuration needed for hardening the device straight out of the box.
 
-`base.conf.j2` contains base configuration that you want present on all devices, such as DNS, NTP, or logging servers, firewall
+`base.conf.j2` contains base configuration that you want present on all devices, such as DNS, NTP, logging servers, firewall
 filters, logging options, etc. The repository uses the following template:
 
 ```
