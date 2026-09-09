@@ -1,14 +1,16 @@
-# Don't forget to define ansible_host per device, the juniper.device.pyez connection requires an IP rather than a
-# hostname for connecting to devices
-
 [ex]
-ex-01.local ansible_host=192.168.1.10
+ex-01.local
 
 [nfx]
-nfx-01.local ansible_host=192.168.1.11
+nfx-01.local
 
 [srx]
-srx-01.local ansible_host=192.168.1.12
+srx-01.local
 
 [qfx]
-qfx-01.local ansible_host=192.168.1.13
+qfx-01.local
+
+# We set ansible_host to the inventory hostname to ensure devices are connected to using their hostname, not IP address. If your
+# device isn't in DNS you can change this or set ansible_host to the host's IP address per host.
+[all:vars]
+ansible_host="{{ inventory_hostname }}"
