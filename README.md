@@ -153,6 +153,7 @@ You can install the Python libraries with the `requirements.txt` in this reposit
 
 The playbooks in this repository were tested on the following Junos OS versions:
 
+  - ACX: JUNOS 21.4
   - EX: JUNOS 21.4
   - NFX: JUNOS 24.2
   - QFX: JUNOS 21.4
