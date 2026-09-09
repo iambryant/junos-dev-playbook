@@ -6,7 +6,8 @@
 
 The playbooks in this repository configure my Junos OS infrastructure from the ground up.
 
-A tiered approach is used for managing hosts. Host configs are managed with files/templates, and are loaded in this order:
+A tiered approach is used for managing hosts. Host configurations are managed with files/templates, and are loaded in this
+order:
 
 - `juniper.conf.j2`
 - `base.conf.j2`
@@ -14,7 +15,7 @@ A tiered approach is used for managing hosts. Host configs are managed with file
 - `{{ inventory_hostname }}.conf.j2` (optional)
 
 `juniper.conf.j2` is the initial bootstrap configuration loaded on a new host over serial. It is applied with `bootstrap.yml`
-in `playbooks` and contains the following configuration:
+in `playbooks/` and contains the following configuration:
 
 ```
 system {
