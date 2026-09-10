@@ -99,8 +99,8 @@
          # SRX1500 while not affecting non vmhost SRXes like an SRX340
         vmhost: "{{ juniper_vmhost | default(device_family in ['nfx', 'qfx']) }}"
       # Templating the vmhost parameter causes the module to lose proper connection-tracking state, throwing a
-      # 'ConnectClosedError' prematurely even though the reboot succeeds. 'ignore_errors' is used here as a workaround
-      ignore_errors: true
+      # 'ConnectClosedError' prematurely even though the reboot succeeds. 'failed_when' is used here as a workaround
+      failed_when: false
       listen: "Reboot device"
 
     - name: "Wait for device to come back online"
