@@ -1,10 +1,12 @@
 system {
+    {% if name_servers is defined and name_servers %}
     replace:
     name-server {
-    {% for server in name_servers %}
+        {% for server in name_servers %}
         {{ server }} routing-instance mgmt_junos;
-    {% endfor %}
+        {% endfor %}
     }
+    {% endif %}
     replace: 
     syslog {
         archive {
@@ -22,12 +24,14 @@ system {
             authorization info;
         }
     }
+    {% if ntp_servers is defined and ntp_servers %}
     replace:
     ntp {
-    {% for server in ntp_servers %}
+        {% for server in ntp_servers %}
         server {{ server }} routing-instance mgmt_junos;
-    {% endfor %}
+        {% endfor %}
     }
+    {% endif %}
 }
 interfaces {
     lo0 {
