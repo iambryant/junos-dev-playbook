@@ -81,4 +81,4 @@
         baud: 9600
         user: "{{ user }}"
         passwd: "{{ password }}"
-#      when: "'root-authentication' not in current_config.config"
+      when: "'root-authentication' not in current_config.config"
