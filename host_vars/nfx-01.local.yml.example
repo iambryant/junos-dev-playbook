@@ -1,5 +1,5 @@
 ---
-management_ip: "{{ ansible_host }}/24"
+management_ip: "192.168.1.10/24"
 
 system_hugepage_count: 10
 
