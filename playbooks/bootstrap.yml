@@ -33,19 +33,6 @@
       ansible.builtin.set_fact:
         device_model: "{{ device_output.ansible_facts.junos.model | lower }}"
 
-    - name: "Ensure device management interface is set as fact"
-      ansible.builtin.set_fact:
-        management_interface: >-
-          {%- if device_model == 'acx500' -%}
-            fxp0
-          {%- elif device_model.startswith(('acx5', 'acx6', 'qfx')) -%}
-            em0
-          {%- elif device_model.startswith('ex') -%}
-            me0
-          {%- else -%}
-            fxp0
-          {%- endif -%}
-
     - name: "Retrieve the current committed configuration"
       juniper.device.config:
         retrieve: "committed"
