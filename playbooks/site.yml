@@ -27,22 +27,13 @@
           name_servers: "{{ system_name_servers }}"
           ntp_servers: "{{ system_ntp_servers }}"
 
-    - name: "Check if device-family-specific configuration file that requires reboot exists"
-      ansible.builtin.stat:
-        path: "{{ playbook_dir }}/templates/{{ device_family }}_reboot.conf.j2"
-      register: device_family_reboot_configuration
-
-    - name: "Ensure device-family-specific configuration that requires reboot is present"
+    - name: "Apply configuration statements that require a reboot"
       juniper.device.config:
-        load: "replace"
-        format: "text"
-        # Change to file or template depending on if you're using a template or static config file
-        template: "{{ playbook_dir }}/templates/{{ device_family }}_reboot.conf.j2"
-        comment: "Loaded device-specific base configuration that requires reboot with Ansible"
-        vars:
-          hugepage_count: "{{ system_hugepage_count | default(omit) }}" # Only NFX family uses this
+        load: "merge"
+        lines: "{{ junos_reboot_required }}"
+        format: "set"
+        comment: "Loaded configuration that required reboot with Ansible"
       notify: "Reboot device"
-      when: device_family_reboot_configuration.stat.exists
 
     - name: "Check if device-family-specific base configuration file exists"
       ansible.builtin.stat:
@@ -59,21 +50,6 @@
         vars:
           hugepage_count: "{{ system_hugepage_count | default(omit) }}" # Only NFX family uses this
       when: device_family_configuration.stat.exists
-
-    - name: "Check if host-specific configuration file that requires reboot exists"
-      ansible.builtin.stat:
-        path: "{{ playbook_dir }}/files/{{ inventory_hostname }}_reboot.conf"
-      register: host_reboot_configuration
-
-    - name: "Ensure host-specific configuration that requires reboot is present"
-      juniper.device.config:
-        load: "replace"
-        format: "text"
-        # Change to file or template depending on if you're using a template or static config file
-        src: "{{ playbook_dir }}/files/{{ inventory_hostname }}_reboot.conf"
-        comment: "Loaded host-specific reboot configuration with Ansible"
-      notify: "Reboot device"
-      when: host_reboot_configuration.stat.exists
 
     - name: "Check if host-specific configuration file exists"
       ansible.builtin.stat:
