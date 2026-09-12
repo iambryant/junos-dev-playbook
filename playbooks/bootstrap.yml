@@ -60,25 +60,26 @@
         commit: false
       register: current_config
 
+    - name: "Render juniper.conf.j2 locally to inherit Ansible variables"
+      ansible.builtin.template:
+        src: "juniper.conf.j2"
+        dest: "/tmp/rendered_juniper_config_{{ inventory_hostname }}.conf"
+      changed_when: false
+
     - name: "Ensure base configuration is loaded to Juniper device over serial"
       juniper.device.config:
         load: "override"
         format: "text"
-        template: "{{ playbook_dir }}/templates/juniper.conf.j2"
-        # juniper.device.config doesn't inherit Ansible's variable context, so you need to pass variables to the
-        # template that you want to be used
+        src: "/tmp/rendered_juniper_config_{{ inventory_hostname }}.conf"
         comment: "Loaded bootstrap configuration with Ansible"
-        vars:
-          login_users: "{{ system_login_users }}"
-          root_authentication: "{{ system_root_authentication }}"
-          host_name: "{{ inventory_hostname.split('.')[0] }}"
-          domain_name: "{{ inventory_hostname.split('.')[1:] | join('.') }}"
-          mgmt_interface: "{{ management_interface }}"
-          mgmt_ip: "{{ management_ip }}"
-          mgmt_gateway: "{{ management_gateway }}"
         mode: "serial"
         port: "{{ serial_port }}"
         baud: 9600
         user: "{{ user }}"
         passwd: "{{ password }}"
       when: "'root-authentication' not in current_config.config"
+
+    - name: "Ensure locally rendered file is removed"
+      ansible.builtin.file:
+        path: "/tmp/rendered_juniper_config_{{ inventory_hostname }}.conf"
+        state: absent
