@@ -1,8 +1,10 @@
+{% include "juniper.conf.j2" %}
+
 system {
-    {% if name_servers is defined and name_servers %}
+    {% if system_name_servers is defined and system_name_servers %}
     replace:
     name-server {
-        {% for server in name_servers %}
+        {% for server in system_name_servers %}
         {{ server }} routing-instance mgmt_junos;
         {% endfor %}
     }
@@ -24,21 +26,12 @@ system {
             authorization info;
         }
     }
-    {% if ntp_servers is defined and ntp_servers %}
+    {% if system_ntp_servers is defined and system_ntp_servers %}
     replace:
     ntp {
-        {% for server in ntp_servers %}
+        {% for server in system_ntp_servers %}
         server {{ server }} routing-instance mgmt_junos;
         {% endfor %}
     }
     {% endif %}
-}
-interfaces {
-    lo0 {
-        unit 0 {
-            family inet {
-                address 127.0.0.1/32;
-            }
-        }
-    }
 }
