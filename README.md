@@ -19,12 +19,15 @@ in `playbooks/` and contains the following configuration:
 
 ```
 system {
-    host-name {{ host_name }};
+    auto-snapshot;
+    dgasp-int;
+    dgasp-usb;
+    host-name {{ inventory_hostname.split('.')[0] }};
     root-authentication {
-        encrypted-password "{{ root_authentication | trim }}";
+        encrypted-password "{{ system_root_authentication | trim }}";
     }
     login {
-{% for user in login_users %}
+{% for user in system_login_users %}
         user {{ user.name }} {
             class {{ user.class }};
             authentication {
@@ -42,16 +45,27 @@ system {
         ssh {
             root-login deny;
             protocol-version v2;
+            max-sessions-per-connection 64;
+            connection-limit 16;
+            rate-limit 50;
         }
     }
-    domain-name {{ domain_name }};
+    domain-name {{ inventory_hostname.split('.')[1:] | join('.') }};
     management-instance;
 }
 interfaces {
-    {{ mgmt_interface }} {
+    {% if device_model == 'acx500' -%}
+    fxp0
+    {%- elif device_model.startswith(('acx5', 'acx6', 'qfx')) -%}
+    em0
+    {%- elif device_model.startswith('ex') -%}
+    me0
+    {%- else -%}
+    fxp0
+    {%- endif %} {
         unit 0 {
             family inet {
-                address {{ mgmt_ip }};
+                address {{ management_ip }};
             }
         }
     }
@@ -61,7 +75,7 @@ routing-instances {
         description "Management VRF";
         routing-options {
             static {
-                route 0.0.0.0/0 next-hop {{ mgmt_gateway }};
+                route 0.0.0.0/0 next-hop {{ management_gateway }};
             }
         }
     }

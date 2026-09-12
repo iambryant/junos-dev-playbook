@@ -1,4 +1,7 @@
 system {
+    auto-snapshot;
+    dgasp-int;
+    dgasp-usb;
     host-name {{ inventory_hostname.split('.')[0] }};
     root-authentication {
         encrypted-password "{{ system_root_authentication | trim }}";
