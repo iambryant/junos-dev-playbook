@@ -19,9 +19,6 @@ in `playbooks/` and contains the following configuration:
 
 ```
 system {
-    auto-snapshot;
-    dgasp-int;
-    dgasp-usb;
     host-name {{ inventory_hostname.split('.')[0] }};
     root-authentication {
         encrypted-password "{{ system_root_authentication | trim }}";
@@ -37,11 +34,6 @@ system {
 {% endfor %}
     }
     services {
-        netconf {
-            ssh;
-            rfc-compliant;
-            yang-compliant;
-        }
         ssh {
             root-login deny;
             protocol-version v2;
@@ -49,7 +41,15 @@ system {
             connection-limit 16;
             rate-limit 50;
         }
+        netconf {
+            ssh;
+            rfc-compliant;
+            yang-compliant;
+        }
     }
+    auto-snapshot;
+    dgasp-int;
+    dgasp-usb;
     domain-name {{ inventory_hostname.split('.')[1:] | join('.') }};
     management-instance;
 }
@@ -90,9 +90,6 @@ filters, logging options, etc. The repository uses the following template:
 
 ```
 system {
-    auto-snapshot;
-    dgasp-int;
-    dgasp-usb;
     {% if name_servers %}
     replace:
     name-server {
