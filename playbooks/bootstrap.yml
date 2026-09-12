@@ -70,3 +70,4 @@
       ansible.builtin.file:
         path: "/tmp/rendered_juniper_config_{{ inventory_hostname }}.conf"
         state: absent
+      changed_when: false
