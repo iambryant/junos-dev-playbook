@@ -51,6 +51,7 @@
       ansible.builtin.template:
         src: "juniper.conf.j2"
         dest: "/tmp/rendered_juniper_config_{{ inventory_hostname }}.conf"
+        mode: '0600'
       changed_when: false
 
     - name: "Ensure base configuration is loaded to Juniper device over serial"
