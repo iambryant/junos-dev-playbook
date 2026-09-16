@@ -33,6 +33,7 @@
         lines: "{{ junos_reboot_required }}"
         format: "set"
         comment: "Loaded configuration that required reboot with Ansible"
+      when: junos_reboot_required is defined and junos_reboot_required | length > 0
       notify: "Reboot device"
 
     - name: "Check if device-family-specific base configuration file exists"
