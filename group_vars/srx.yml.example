@@ -1,5 +1,5 @@
 ---
-# Use this for Junos statements that require a reboot afterwards, if the task that applies these statements   
+# Use this for Junos statements that require a reboot afterwards, if the task that applies these statements reports
 # changed, it will trigger a reboot handler
 junos_reboot_required:
   - "set security forwarding-options family inet6 mode flow-based"
