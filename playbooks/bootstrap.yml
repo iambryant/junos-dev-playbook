@@ -54,7 +54,7 @@
         mode: '0600'
       changed_when: false
 
-    - name: "Ensure base configuration is loaded to Juniper device over serial"
+    - name: "Ensure bootstrap configuration is loaded to Juniper device over serial"
       juniper.device.config:
         load: "override"
         format: "text"
