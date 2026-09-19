@@ -31,18 +31,27 @@ system {
     dgasp-int;
     dgasp-usb;
     domain-name {{ inventory_hostname.split('.')[1:] | join('.') }};
+    {% if management_instance | default(true) | bool %}
     management-instance;
+    {% endif %}
 }
 interfaces {
-    {% if device_model == 'acx500' -%}
+    {#
+      You can set a different management interface if you don't want to use the default management interface; note
+      that the mgmt_junos VRF is hardcoded to only work with the default em0/fxp0/me0 interfaces, so you will need to
+      create a separate VRF if you want strict isolation.
+    #}
+    {% if management_interface is defined and management_interface %}
+    {{ management_interface }}
+    {% elif device_model == 'acx500' %}
     fxp0
-    {%- elif device_model.startswith(('acx5', 'acx6', 'qfx')) -%}
+    {% elif device_model.startswith(('acx5', 'acx6', 'qfx')) %}
     em0
-    {%- elif device_model.startswith('ex') -%}
+    {% elif device_model.startswith('ex') %}
     me0
-    {%- else -%}
+    {% else %}
     fxp0
-    {%- endif %} {
+    {% endif %} {
         unit 0 {
             family inet {
                 address {{ management_ip }};
@@ -50,6 +59,8 @@ interfaces {
         }
     }
 }
+{# You have the option of disabling the mgmt_junos VRF if you want, but it is enabled by default #}
+{% if management_instance | default(true) | bool %}
 routing-instances {
     mgmt_junos {
         description "Management VRF";
@@ -60,3 +71,4 @@ routing-instances {
         }
     }
 }
+{% endif %}

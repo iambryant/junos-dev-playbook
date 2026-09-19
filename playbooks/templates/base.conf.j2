@@ -5,7 +5,7 @@ system {
     replace:
     name-server {
         {% for server in system_name_servers %}
-        {{ server }} routing-instance mgmt_junos;
+        {{ server }}{% if management_instance | default(true) | bool %} routing-instance mgmt_junos{% endif %};
         {% endfor %}
     }
     {% endif %}
@@ -30,7 +30,7 @@ system {
     replace:
     ntp {
         {% for server in system_ntp_servers %}
-        server {{ server }} routing-instance mgmt_junos;
+        server {{ server }}{% if management_instance | default(true) | bool %} routing-instance mgmt_junos{% endif %};
         {% endfor %}
     }
     {% endif %}
