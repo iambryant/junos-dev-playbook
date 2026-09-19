@@ -27,6 +27,8 @@
           name_servers: "{{ system_name_servers }}"
           ntp_servers: "{{ system_ntp_servers }}"
 
+    # Use the junos_reboot_required list variable for Junos statements that require a reboot afterwards, if this task
+    # reports changed, it will trigger the "Reboot device" handler
     - name: "Apply configuration statements that require a reboot"
       juniper.device.config:
         load: "merge"
