@@ -22,6 +22,7 @@
         lines: "{{ junos_reboot_required }}"
         format: "set"
         comment: "Loaded configuration that required reboot with Ansible"
+        timeout: 300
       when: junos_reboot_required is defined and junos_reboot_required | length > 0
       notify: "Reboot device"
 
