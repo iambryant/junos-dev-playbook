@@ -12,10 +12,23 @@ system_login_users:
 
 management_gateway: "192.168.1.1"
 
-system_name_servers:
-  - 8.8.4.4 # dns.google
-  - 8.8.8.8 # dns.google
-
-system_ntp_servers:
-  - 129.6.15.28 # time-a-g.nist.gov
-  - 129.6.15.29 # time-b-g.nist.gov
+junos_config_base:
+  system:
+    name-server:
+      - "8.8.4.4 routing-instance mgmt_junos" # dns.google
+      - "8.8.8.8 routing-instance mgmt_junos" # dns.google
+    syslog:
+      archive:
+        size: "100k"
+        files: 3
+      "user *":
+        any: emergency
+      "file interactive-commands":
+        interactive-commands: any
+      "file messages":
+        any: notice
+        authorization: info
+    ntp:
+      server:
+        - "129.6.15.28 routing-instance mgmt_junos" # time-a-g.nist.gov
+        - "129.6.15.29 routing-instance mgmt_junos" # time-b-g.nist.gov
