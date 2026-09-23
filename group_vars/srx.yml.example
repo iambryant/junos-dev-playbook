@@ -4,6 +4,12 @@ junos_reboot_required:
 
 applications:
   application:
+    MINECRAFT-JAVA:
+      protocol: tcp
+      destination-port: 25565
+    MINECRAFT-BEDROCK:
+      protocol: udp
+      destination-port: 19132
     SERVER-MAPPER:
       protocol: tcp
       destination-port: 449
@@ -153,3 +159,7 @@ applications:
       application-set:
         - IBM-I-NON-SSL
         - IBM-I-SSL
+    MINECRAFT:
+      application:
+        - MINECRAFT-JAVA
+        - MINECRAFT-BEDROCK
