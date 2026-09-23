@@ -5,161 +5,161 @@ junos_reboot_required:
 applications:
   application:
     MINECRAFT-JAVA:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 25565
     MINECRAFT-BEDROCK:
-      protocol: udp
+      protocol: "udp"
       destination-port: 19132
     SERVER-MAPPER:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 449
     LICENSE-MANAGEMENT:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8470
     LICENSE-MANAGEMENT-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9470
     DATABASE-ACCESS:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8471
     DATABASE-ACCESS-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9471
     DATA-QUEUES:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8472
     DATA-QUEUES-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9472
     IFS-ACCESS:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8473
     IFS-ACCESS-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9473
     NETWORK-PRINTERS:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8474
     NETWORK-PRINTERS-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9474
     REMOTE-COMMAND:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8475
     REMOTE-COMMAND-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9475
     SIGNON-VERIFICATION:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 8476
     SIGNON-VERIFICATION-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9476
     HOST-CONNECTION-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 9480
     TELNET-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 992
     NEW-NAVIGATOR-FOR-I:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2002
     NEW-NAVIGATOR-FOR-I-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2003
     OLD-NAVIGATOR-FOR-I:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2004
     OLD-NAVIGATOR-FOR-I-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2005
     DIGITAL-CERTIFICATE-MANAGER:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2006
     DIGITAL-CERTIFICATE-MANAGER-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2007
     HTTP-ADMINISTRATION:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2001
     HTTP-ADMINISTRATION-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2010
     DDM-DRDA:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 446
     DDM-DRDA-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 448
     SERVICE-TOOLS-SERVER:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 3000
     HMC-5250-CONSOLE:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2300
     HMC-5250-CONSOLE-SSL:
-      protocol: tcp
+      protocol: "tcp"
       destination-port: 2301
     ACS-LAN-CONSOLE:
       term:
         t1:
-          protocol: tcp
+          protocol: "tcp"
           destination-port: 3001
         t2:
-          protocol: tcp
+          protocol: "tcp"
           destination-port: 3002
         t3:
-          protocol: tcp
+          protocol: "tcp"
           destination-port: 2300
         t4:
-          protocol: tcp
+          protocol: "tcp"
           destination-port: 2323
 
   application-set:
     IBM-I-NON-SSL:
       application:
-        - SERVER-MAPPER
-        - LICENSE-MANAGEMENT
-        - DATABASE-ACCESS
-        - DATA-QUEUES
-        - IFS-ACCESS
-        - NETWORK-PRINTERS
-        - REMOTE-COMMAND
-        - SIGNON-VERIFICATION
-        - junos-telnet
-        - NEW-NAVIGATOR-FOR-I
-        - OLD-NAVIGATOR-FOR-I
-        - DIGITAL-CERTIFICATE-MANAGER
-        - HTTP-ADMINISTRATION
-        - DDM-DRDA
-        - junos-ssh
-        - SERVICE-TOOLS-SERVER
-        - HMC-5250-CONSOLE
-        - ACS-LAN-CONSOLE
+        - "SERVER-MAPPER"
+        - "LICENSE-MANAGEMENT"
+        - "DATABASE-ACCESS"
+        - "DATA-QUEUES"
+        - "IFS-ACCESS"
+        - "NETWORK-PRINTERS"
+        - "REMOTE-COMMAND"
+        - "SIGNON-VERIFICATION"
+        - "junos-telnet"
+        - "NEW-NAVIGATOR-FOR-I"
+        - "OLD-NAVIGATOR-FOR-I"
+        - "DIGITAL-CERTIFICATE-MANAGER"
+        - "HTTP-ADMINISTRATION"
+        - "DDM-DRDA"
+        - "junos-ssh"
+        - "SERVICE-TOOLS-SERVER"
+        - "HMC-5250-CONSOLE"
+        - "ACS-LAN-CONSOLE"
       application-set:
-        - junos-cifs
+        - "junos-cifs"
     IBM-I-SSL:
       application:
-        - LICENSE-MANAGEMENT-SSL
-        - DATABASE-ACCESS-SSL
-        - DATA-QUEUES-SSL
-        - IFS-ACCESS-SSL
-        - NETWORK-PRINTERS-SSL
-        - REMOTE-COMMAND-SSL
-        - SIGNON-VERIFICATION-SSL
-        - HOST-CONNECTION-SSL
-        - TELNET-SSL
-        - NEW-NAVIGATOR-FOR-I-SSL
-        - OLD-NAVIGATOR-FOR-I-SSL
-        - DIGITAL-CERTIFICATE-MANAGER-SSL
-        - HTTP-ADMINISTRATION-SSL
-        - DDM-DRDA-SSL
-        - HMC-5250-CONSOLE-SSL
+        - "LICENSE-MANAGEMENT-SSL"
+        - "DATABASE-ACCESS-SSL"
+        - "DATA-QUEUES-SSL"
+        - "IFS-ACCESS-SSL"
+        - "NETWORK-PRINTERS-SSL"
+        - "REMOTE-COMMAND-SSL"
+        - "SIGNON-VERIFICATION-SSL"
+        - "HOST-CONNECTION-SSL"
+        - "TELNET-SSL"
+        - "NEW-NAVIGATOR-FOR-I-SSL"
+        - "OLD-NAVIGATOR-FOR-I-SSL"
+        - "DIGITAL-CERTIFICATE-MANAGER-SSL"
+        - "HTTP-ADMINISTRATION-SSL"
+        - "DDM-DRDA-SSL"
+        - "HMC-5250-CONSOLE-SSL"
     IBM-I:
       application-set:
-        - IBM-I-NON-SSL
-        - IBM-I-SSL
+        - "IBM-I-NON-SSL"
+        - "IBM-I-SSL"
     MINECRAFT:
       application:
-        - MINECRAFT-JAVA
-        - MINECRAFT-BEDROCK
+        - "MINECRAFT-JAVA"
+        - "MINECRAFT-BEDROCK"
