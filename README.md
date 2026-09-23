@@ -6,18 +6,26 @@
 
 The playbooks in this repository configure my Junos OS infrastructure from the ground up.
 
-A tiered approach is used for managing hosts. Host configurations are managed with files/templates, and are loaded in this
-order:
+A tiered approach is used for managing hosts. Host configurations are managed with files/templates, and are loaded in
+this order:
 
 - `juniper.conf.j2`
 - `base.conf.j2`
-- `{{ device_family}}.conf.j2` (optional)
-- `{{ inventory_hostname }}.conf.j2` (optional)
 
-`juniper.conf.j2` is the initial bootstrap configuration loaded on a new host over serial. It is applied with `bootstrap.yml`
-in `playbooks/` and contains the following configuration:
+### Why Bootstrap Over Serial?
 
-```
+Normally, you'd use ZTP to load base configurations on Juniper devices. ZTP is Juniper's solution to loading a base
+configuration on a new/factory-reset device. You can read about it here:
+https://www.juniper.net/documentation/us/en/software/junos/junos-install-upgrade/topics/topic-map/zero-touch-provision.html#id-zero-touch-provisioning-using-dhcp-options
+However, oftentimes device base configs are written to prefer external servers like redirect.juniper.net and aren't
+as compatible with local DHCP + TFTP/HTTP setups. Bootstrapping over serial serves to be an easy solution to replace
+that; it loads and overwrites the base config on a new Juniper device with your preferred base config, over serial; no
+network needed!
+
+`juniper.conf.j2` is the initial bootstrap configuration loaded on a new host over serial.
+It is applied with `bootstrap.yml` in `playbooks/` and contains the following configuration:
+
+```text
 system {
     host-name {{ inventory_hostname.split('.')[0] }};
     root-authentication {
@@ -48,21 +56,28 @@ system {
         }
     }
     auto-snapshot;
-    dgasp-int;
-    dgasp-usb;
     domain-name {{ inventory_hostname.split('.')[1:] | join('.') }};
+    {% if management_instance | default(true) | bool %}
     management-instance;
+    {% endif %}
 }
 interfaces {
-    {% if device_model == 'acx500' -%}
+    {#
+      You can set a different management interface if you don't want to use the default management interface; note
+      that the mgmt_junos VRF is hardcoded to only work with the default em0/fxp0/me0 interfaces, so you will need to
+      create a separate VRF if you want strict isolation.
+    #}
+    {% if management_interface is defined and management_interface %}
+    {{ management_interface }}
+    {% elif device_model == 'acx500' %}
     fxp0
-    {%- elif device_model.startswith(('acx5', 'acx6', 'qfx')) -%}
+    {% elif device_model.startswith(('acx5', 'acx6', 'qfx')) %}
     em0
-    {%- elif device_model.startswith('ex') -%}
+    {% elif device_model.startswith('ex') %}
     me0
-    {%- else -%}
+    {% else %}
     fxp0
-    {%- endif %} {
+    {% endif %} {
         unit 0 {
             family inet {
                 address {{ management_ip }};
@@ -70,6 +85,8 @@ interfaces {
         }
     }
 }
+{# You have the option of disabling the mgmt_junos VRF if you want, but it is enabled by default #}
+{% if management_instance | default(true) | bool %}
 routing-instances {
     mgmt_junos {
         description "Management VRF";
@@ -80,67 +97,34 @@ routing-instances {
         }
     }
 }
+{% endif %}
 ```
 
 It contains the minimum config needed to get a device ready for being managed with Ansible as well as any additional
 configuration needed for hardening the device straight out of the box.
 
-`base.conf.j2` contains base configuration that you want present on all devices, such as DNS, NTP, logging servers, firewall
-filters, logging options, etc. The repository uses the following template:
+Now, looking at `base.conf.j2`, you may be confused seeing only these four statements:
 
-```
-system {
-    {% if name_servers %}
-    replace:
-    name-server {
-    {% for server in name_servers %}
-        {{ server }} routing-instance mgmt_junos;
-    {% endfor %}
-    }
-    {% endif %}
-    replace:
-    {# Present because we don't have a central logging server yet #}
-    syslog {
-        archive {
-            size 100k;
-            files 3;
-        }
-        user * {
-            any emergency;
-        }
-        file interactive-commands {
-            interactive-commands any;
-        }
-        file messages {
-            any notice;
-            authorization info;
-        }
-    }
-    {% if ntp_servers %}
-    replace:
-    ntp {
-    {% for server in ntp_servers %}
-        server {{ server }} routing-instance mgmt_junos;
-    {% endfor %}
-    }
-    {% endif %}
-}
-interfaces {
-    lo0 {
-        unit 0 {
-            family inet {
-                address 127.0.0.1/32;
-            }
-        }
-    }
-}
+```text
+{% include "juniper.conf.j2" %}
+
+{# Configuration to be applied to all hosts set in group_vars/all.yml #}
+{{ junos_config_base | default({}) | iambryant.junos.to_junos }}
+
+{# Configuration to be applied to a group of hosts set in group_vars/<group>.yml #}
+{{ junos_config_group | default({}) | iambryant.junos.to_junos }}
+
+{# Configuration to be applied to an individual host set in host_vars #}
+{{ junos_config_host | default({}) | iambryant.junos.to_junos }}
 ```
 
-The next templates, `{{ device_family}}.conf.j2`, and `{{ inventory_hostname }}.conf.j2` are optional and only loaded if
-they're found to exist in the repository. `{{ device_family}}.conf.j2` is used if you have configuration you want to be applied
-to all members of a device family such as the `EX` family, `MX` family, `SRX` family, etc. `{{ inventory_hostname }}.conf.j2`
-is used for individual hosts that require configuration to only be applied to that specific host, such as interface ranges,
-security policies, you name it. 
+`juniper.conf.j2` is included again in `base.conf.j2` in case you decide to make any changes to the bootstrap config
+and want them to be applied to your hosts without needing to do it again over serial. As for `junos_config_base`,
+`junos_config_group`, and `junos_config_host`, they are dictionaries that you can apply either as a base configuration
+for all hosts, for a group of hosts, or for a specific host. You can define your Junos OS configuration as YAML, and
+the `to_junos` plugin (from a separate Junos collection I've written) will translate it to Junos configuration! For
+examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles pushing and managing
+the configuration using the `juniper.device.config` module.
 
 **Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases are
 different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork the

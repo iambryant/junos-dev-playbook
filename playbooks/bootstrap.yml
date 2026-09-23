@@ -1,12 +1,4 @@
 ---
-# Normally, you'd use ZTP to load base configurations on Juniper devices. ZTP is Juniper's solution to loading a base
-# configuration on a new/factory-reset device. You can read about it here:
-# https://www.juniper.net/documentation/us/en/software/junos/junos-install-upgrade/topics/topic-map/zero-touch-provision.html#id-zero-touch-provisioning-using-dhcp-options
-# However, oftentimes device base configs are written to prefer external servers like redirect.juniper.net and aren't
-# as compatible with local DHCP + TFTP/HTTP setups. This playbook serves to be an easy solution to replace that; it
-# loads and overwrites the base config on a new Juniper device with your preferred base config, over serial;
-# no network needed!
-
 - name: "Bootstrap devices over console"
   # Note: Ansible requires a host/group here for inventory context,
   # even though the configuration is being sent over serial.

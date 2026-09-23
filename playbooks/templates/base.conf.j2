@@ -1,37 +1,10 @@
 {% include "juniper.conf.j2" %}
 
-system {
-    {% if system_name_servers is defined and system_name_servers %}
-    replace:
-    name-server {
-        {% for server in system_name_servers %}
-        {{ server }}{% if management_instance | default(true) | bool %} routing-instance mgmt_junos{% endif %};
-        {% endfor %}
-    }
-    {% endif %}
-    replace: 
-    syslog {
-        archive {
-            size 100k;
-            files 3;
-        }
-        user * {
-            any emergency;
-        }
-        file interactive-commands {
-            interactive-commands any;
-        }
-        file messages {
-            any notice;
-            authorization info;
-        }
-    }
-    {% if system_ntp_servers is defined and system_ntp_servers %}
-    replace:
-    ntp {
-        {% for server in system_ntp_servers %}
-        server {{ server }}{% if management_instance | default(true) | bool %} routing-instance mgmt_junos{% endif %};
-        {% endfor %}
-    }
-    {% endif %}
-}
+{# Configuration to be applied to all hosts set in group_vars/all.yml #}
+{{ junos_config_base | default({}) | iambryant.junos.to_junos }}
+
+{# Configuration to be applied to a group of hosts set in group_vars/<group>.yml #}
+{{ junos_config_group | default({}) | iambryant.junos.to_junos }}
+
+{# Configuration to be applied to an individual host set in host_vars #}
+{{ junos_config_host | default({}) | iambryant.junos.to_junos }}
