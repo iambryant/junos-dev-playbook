@@ -28,8 +28,6 @@ system {
         }
     }
     auto-snapshot;
-    dgasp-int;
-    dgasp-usb;
     domain-name {{ inventory_hostname.split('.')[1:] | join('.') }};
     {% if management_instance | default(true) | bool %}
     management-instance;
