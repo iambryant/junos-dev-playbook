@@ -4,6 +4,32 @@ management_ip: "192.168.1.10/24"
 junos_reboot_required:
   - "set system memory hugepages page-size 1024 page-count 10"
 
+junos_config_host:
+  groups:
+    NFX-SXE-DEFAULT:
+      interfaces:
+        '"<sxe-*>"':
+          description: '"Test description"'
+          mtu: 9192
+          ether-options:
+            no-flow-control: true
+
+  interfaces:
+    apply-groups: "NFX-SXE-DEFAULT"
+    sxe-0/0/0:
+      "unit 0":
+        family:
+          ethernet-switching:
+            interface-mode: "trunk"
+    sxe-0/0/1:
+      "unit 0":
+        family:
+          ethernet-switching:
+            interface-mode: "trunk"
+
+  # VLANs only need to be defined in the vlans stanza in NFX if they're being bridged to front panel ports via
+  # sxe-* interfaces
+
 vnf_instances:
   - name: "ubuntu-01"
     domain: "local"
