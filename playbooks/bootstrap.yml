@@ -2,8 +2,8 @@
 - name: "Bootstrap devices over console"
   # Note: Ansible requires a host/group here for inventory context,
   # even though the configuration is being sent over serial.
-  # Either replace 'all' with the device(s) you're targeting, or use -l/--limit on the command line to target specific
-  # device(s)
+  # Either replace 'all' with the device(s) you're targeting, or use -l/--limit on the command line to target a specific
+  # device
   hosts: all
   connection: local
   gather_facts: false
