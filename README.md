@@ -10,7 +10,7 @@ A tiered approach is used for managing hosts. Host configurations are managed wi
 this order:
 
 - `juniper.conf.j2`
-- `base.conf.j2`
+- `site.conf.j2`
 
 ### Why Bootstrap Over Serial?
 
@@ -100,10 +100,10 @@ routing-instances {
 {% endif %}
 ```
 
-It contains the minimum config needed to get a device ready for being managed with Ansible as well as any additional
-configuration needed for hardening the device straight out of the box.
+It contains the minimum configuration needed to get a device ready for being managed with Ansible as well as any
+additional configuration needed for hardening the device straight out of the box.
 
-Now, looking at `base.conf.j2`, you may be confused seeing only these three statements:
+Now, looking at `site.conf.j2`, you may be confused seeing only these three statements:
 
 ```text
 {# Configuration to be applied to all hosts set in group_vars/all.yml #}
@@ -121,6 +121,14 @@ configuration for all hosts, for a group of hosts, or for a specific host. You c
 YAML, and the `to_junos` plugin (from a separate Junos collection I've written) will translate it to Junos
 configuration! For examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles
 pushing and managing the configuration using the `juniper.device.config` module.
+
+`site.conf.j2` is applied using the `site.yml` playbook, and can be run like this (`commit_message` isn't required but
+is good practice for informative commits)
+
+```text
+ansible-playbook site.yml -e "commit_message='Ensure my example configuration is applied'"
+```
+
 
 **Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases are
 different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork the
