@@ -1,5 +1,3 @@
-{% include "juniper.conf.j2" %}
-
 {# Configuration to be applied to all hosts set in group_vars/all.yml #}
 {{ junos_config_base | default({}) | iambryant.junos.to_junos }}
 

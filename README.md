@@ -103,11 +103,9 @@ routing-instances {
 It contains the minimum config needed to get a device ready for being managed with Ansible as well as any additional
 configuration needed for hardening the device straight out of the box.
 
-Now, looking at `base.conf.j2`, you may be confused seeing only these four statements:
+Now, looking at `base.conf.j2`, you may be confused seeing only these three statements:
 
 ```text
-{% include "juniper.conf.j2" %}
-
 {# Configuration to be applied to all hosts set in group_vars/all.yml #}
 {{ junos_config_base | default({}) | iambryant.junos.to_junos }}
 
@@ -118,13 +116,11 @@ Now, looking at `base.conf.j2`, you may be confused seeing only these four state
 {{ junos_config_host | default({}) | iambryant.junos.to_junos }}
 ```
 
-`juniper.conf.j2` is included again in `base.conf.j2` in case you decide to make any changes to the bootstrap config
-and want them to be applied to your hosts without needing to do it again over serial. As for `junos_config_base`,
-`junos_config_group`, and `junos_config_host`, they are dictionaries that you can apply either as a base configuration
-for all hosts, for a group of hosts, or for a specific host. You can define your Junos OS configuration as YAML, and
-the `to_junos` plugin (from a separate Junos collection I've written) will translate it to Junos configuration! For
-examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles pushing and managing
-the configuration using the `juniper.device.config` module.
+`junos_config_base`, `junos_config_group`, and `junos_config_host`, are dictionaries that you can apply either as a base
+configuration for all hosts, for a group of hosts, or for a specific host. You can define your Junos OS configuration as
+YAML, and the `to_junos` plugin (from a separate Junos collection I've written) will translate it to Junos
+configuration! For examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles
+pushing and managing the configuration using the `juniper.device.config` module.
 
 **Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases are
 different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork the
