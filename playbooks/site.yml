@@ -26,19 +26,19 @@
       when: junos_reboot_required is defined and junos_reboot_required | length > 0
       notify: "Reboot device"
 
-    - name: "Render base.conf.j2 locally to inherit Ansible variables"
+    - name: "Render site.conf.j2 locally to inherit Ansible variables"
       ansible.builtin.template:
-        src: "base.conf.j2"
+        src: "site.conf.j2"
         dest: "/tmp/rendered_base_config_{{ inventory_hostname }}.conf"
         mode: '0600'
       changed_when: false
 
-    - name: "Ensure base configuration is present"
+    - name: "Ensure Junos OS configuration is applied with Ansible"
       juniper.device.config:
         load: "merge"
         format: "text"
         src: "/tmp/rendered_base_config_{{ inventory_hostname }}.conf"
-        comment: "Loaded base configuration with Ansible"
+        comment: "{{ commit_message | default('Automated deployment via Ansible') }}"
         timeout: 300
 
     - name: "Ensure locally rendered file is removed"
