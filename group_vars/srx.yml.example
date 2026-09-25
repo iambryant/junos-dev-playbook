@@ -1,165 +1,220 @@
 ---
 junos_reboot_required:
-  - "set security forwarding-options family inet6 mode flow-based"
+    - "set security forwarding-options family inet6 mode flow-based"
 
-applications:
-  application:
-    MINECRAFT-JAVA:
-      protocol: "tcp"
+junos_config_group:
+  applications:
+    application MINECRAFT-JAVA:
+      protocol: tcp
       destination-port: 25565
-    MINECRAFT-BEDROCK:
-      protocol: "udp"
+    application MINECRAFT-BEDROCK:
+      protocol: udp
       destination-port: 19132
-    SERVER-MAPPER:
-      protocol: "tcp"
+    application SERVER-MAPPER:
+      protocol: tcp
       destination-port: 449
-    LICENSE-MANAGEMENT:
-      protocol: "tcp"
+    application LICENSE-MANAGEMENT:
+      protocol: tcp
       destination-port: 8470
-    LICENSE-MANAGEMENT-SSL:
-      protocol: "tcp"
+    application LICENSE-MANAGEMENT-SSL:
+      protocol: tcp
       destination-port: 9470
-    DATABASE-ACCESS:
-      protocol: "tcp"
+    application DATABASE-ACCESS:
+      protocol: tcp
       destination-port: 8471
-    DATABASE-ACCESS-SSL:
-      protocol: "tcp"
+    application DATABASE-ACCESS-SSL:
+      protocol: tcp
       destination-port: 9471
-    DATA-QUEUES:
-      protocol: "tcp"
+    application DATA-QUEUES:
+      protocol: tcp
       destination-port: 8472
-    DATA-QUEUES-SSL:
-      protocol: "tcp"
+    application DATA-QUEUES-SSL:
+      protocol: tcp
       destination-port: 9472
-    IFS-ACCESS:
-      protocol: "tcp"
+    application IFS-ACCESS:
+      protocol: tcp
       destination-port: 8473
-    IFS-ACCESS-SSL:
-      protocol: "tcp"
+    application IFS-ACCESS-SSL:
+      protocol: tcp
       destination-port: 9473
-    NETWORK-PRINTERS:
-      protocol: "tcp"
+    application NETWORK-PRINTERS:
+      protocol: tcp
       destination-port: 8474
-    NETWORK-PRINTERS-SSL:
-      protocol: "tcp"
+    application NETWORK-PRINTERS-SSL:
+      protocol: tcp
       destination-port: 9474
-    REMOTE-COMMAND:
-      protocol: "tcp"
+    application REMOTE-COMMAND:
+      protocol: tcp
       destination-port: 8475
-    REMOTE-COMMAND-SSL:
-      protocol: "tcp"
+    application REMOTE-COMMAND-SSL:
+      protocol: tcp
       destination-port: 9475
-    SIGNON-VERIFICATION:
-      protocol: "tcp"
+    application SIGNON-VERIFICATION:
+      protocol: tcp
       destination-port: 8476
-    SIGNON-VERIFICATION-SSL:
-      protocol: "tcp"
+    application SIGNON-VERIFICATION-SSL:
+      protocol: tcp
       destination-port: 9476
-    HOST-CONNECTION-SSL:
-      protocol: "tcp"
+    application HOST-CONNECTION-SSL:
+      protocol: tcp
       destination-port: 9480
-    TELNET-SSL:
-      protocol: "tcp"
+    application TELNET-SSL:
+      protocol: tcp
       destination-port: 992
-    NEW-NAVIGATOR-FOR-I:
-      protocol: "tcp"
+    application NEW-NAVIGATOR-FOR-I:
+      protocol: tcp
       destination-port: 2002
-    NEW-NAVIGATOR-FOR-I-SSL:
-      protocol: "tcp"
+    application NEW-NAVIGATOR-FOR-I-SSL:
+      protocol: tcp
       destination-port: 2003
-    OLD-NAVIGATOR-FOR-I:
-      protocol: "tcp"
+    application OLD-NAVIGATOR-FOR-I:
+      protocol: tcp
       destination-port: 2004
-    OLD-NAVIGATOR-FOR-I-SSL:
-      protocol: "tcp"
+    application OLD-NAVIGATOR-FOR-I-SSL:
+      protocol: tcp
       destination-port: 2005
-    DIGITAL-CERTIFICATE-MANAGER:
-      protocol: "tcp"
+    application DIGITAL-CERTIFICATE-MANAGER:
+      protocol: tcp
       destination-port: 2006
-    DIGITAL-CERTIFICATE-MANAGER-SSL:
-      protocol: "tcp"
+    application DIGITAL-CERTIFICATE-MANAGER-SSL:
+      protocol: tcp
       destination-port: 2007
-    HTTP-ADMINISTRATION:
-      protocol: "tcp"
+    application HTTP-ADMINISTRATION:
+      protocol: tcp
       destination-port: 2001
-    HTTP-ADMINISTRATION-SSL:
-      protocol: "tcp"
+    application HTTP-ADMINISTRATION-SSL:
+      protocol: tcp
       destination-port: 2010
-    DDM-DRDA:
-      protocol: "tcp"
+    application DDM-DRDA:
+      protocol: tcp
       destination-port: 446
-    DDM-DRDA-SSL:
-      protocol: "tcp"
+    application DDM-DRDA-SSL:
+      protocol: tcp
       destination-port: 448
-    SERVICE-TOOLS-SERVER:
-      protocol: "tcp"
+    application SERVICE-TOOLS-SERVER:
+      protocol: tcp
       destination-port: 3000
-    HMC-5250-CONSOLE:
-      protocol: "tcp"
+    application HMC-5250-CONSOLE:
+      protocol: tcp
       destination-port: 2300
-    HMC-5250-CONSOLE-SSL:
-      protocol: "tcp"
+    application HMC-5250-CONSOLE-SSL:
+      protocol: tcp
       destination-port: 2301
-    ACS-LAN-CONSOLE:
-      term:
-        t1:
-          protocol: "tcp"
-          destination-port: 3001
-        t2:
-          protocol: "tcp"
-          destination-port: 3002
-        t3:
-          protocol: "tcp"
-          destination-port: 2300
-        t4:
-          protocol: "tcp"
-          destination-port: 2323
+    application ACS-LAN-CONSOLE:
+      term t1:
+        protocol: tcp
+        destination-port: 3001
+      term t2:
+        protocol: tcp
+        destination-port: 3002
+      term t3:
+        protocol: tcp
+        destination-port: 2300
+      term t4:
+        protocol: tcp
+        destination-port: 2323
 
-  application-set:
-    IBM-I-NON-SSL:
+    application-set IBM-I-NON-SSL:
       application:
-        - "SERVER-MAPPER"
-        - "LICENSE-MANAGEMENT"
-        - "DATABASE-ACCESS"
-        - "DATA-QUEUES"
-        - "IFS-ACCESS"
-        - "NETWORK-PRINTERS"
-        - "REMOTE-COMMAND"
-        - "SIGNON-VERIFICATION"
-        - "junos-telnet"
-        - "NEW-NAVIGATOR-FOR-I"
-        - "OLD-NAVIGATOR-FOR-I"
-        - "DIGITAL-CERTIFICATE-MANAGER"
-        - "HTTP-ADMINISTRATION"
-        - "DDM-DRDA"
-        - "junos-ssh"
-        - "SERVICE-TOOLS-SERVER"
-        - "HMC-5250-CONSOLE"
-        - "ACS-LAN-CONSOLE"
+        - SERVER-MAPPER
+        - LICENSE-MANAGEMENT
+        - DATABASE-ACCESS
+        - DATA-QUEUES
+        - IFS-ACCESS
+        - NETWORK-PRINTERS
+        - REMOTE-COMMAND
+        - SIGNON-VERIFICATION
+        - junos-telnet
+        - NEW-NAVIGATOR-FOR-I
+        - OLD-NAVIGATOR-FOR-I
+        - DIGITAL-CERTIFICATE-MANAGER
+        - HTTP-ADMINISTRATION
+        - DDM-DRDA
+        - junos-ssh
+        - SERVICE-TOOLS-SERVER
+        - HMC-5250-CONSOLE
+        - ACS-LAN-CONSOLE
       application-set:
-        - "junos-cifs"
-    IBM-I-SSL:
+        - junos-cifs
+    application-set IBM-I-SSL:
       application:
-        - "LICENSE-MANAGEMENT-SSL"
-        - "DATABASE-ACCESS-SSL"
-        - "DATA-QUEUES-SSL"
-        - "IFS-ACCESS-SSL"
-        - "NETWORK-PRINTERS-SSL"
-        - "REMOTE-COMMAND-SSL"
-        - "SIGNON-VERIFICATION-SSL"
-        - "HOST-CONNECTION-SSL"
-        - "TELNET-SSL"
-        - "NEW-NAVIGATOR-FOR-I-SSL"
-        - "OLD-NAVIGATOR-FOR-I-SSL"
-        - "DIGITAL-CERTIFICATE-MANAGER-SSL"
-        - "HTTP-ADMINISTRATION-SSL"
-        - "DDM-DRDA-SSL"
-        - "HMC-5250-CONSOLE-SSL"
-    IBM-I:
+        - LICENSE-MANAGEMENT-SSL
+        - DATABASE-ACCESS-SSL
+        - DATA-QUEUES-SSL
+        - IFS-ACCESS-SSL
+        - NETWORK-PRINTERS-SSL
+        - REMOTE-COMMAND-SSL
+        - SIGNON-VERIFICATION-SSL
+        - HOST-CONNECTION-SSL
+        - TELNET-SSL
+        - NEW-NAVIGATOR-FOR-I-SSL
+        - OLD-NAVIGATOR-FOR-I-SSL
+        - DIGITAL-CERTIFICATE-MANAGER-SSL
+        - HTTP-ADMINISTRATION-SSL
+        - DDM-DRDA-SSL
+        - HMC-5250-CONSOLE-SSL
+    application-set IBM-I:
       application-set:
-        - "IBM-I-NON-SSL"
-        - "IBM-I-SSL"
-    MINECRAFT:
+        - IBM-I-NON-SSL
+        - IBM-I-SSL
+    application-set MINECRAFT:
       application:
-        - "MINECRAFT-JAVA"
-        - "MINECRAFT-BEDROCK"
+        - MINECRAFT-JAVA
+        - MINECRAFT-BEDROCK
+
+  security:
+    address-book:
+      global:
+        address:
+          - GOOGLE-8-8-4-4-32 8.8.4.4/32
+          - GOOGLE-8-8-8-8-32 8.8.8.8/32
+          - GOOGLE-2001-4860-4860--8844-128 2001:4860:4860::8844/128
+          - GOOGLE-2001-4860-4860--8888-128 2001:4860:4860::8888/128
+          - NIST-129-6-15-27-32 129.6.15.27/32
+          - NIST-129-6-15-26-32 129.6.15.26/32
+          - NIST-132-163-97-4-32 132.163.97.4/32
+          - NIST-132-163-96-4-32 132.163.96.4/32
+          - NIST-2610-20-6f15-15--27-128 2610:20:6f15:15::27/128
+          - NIST-2610-20-6f15-15--26-128 2610:20:6f15:15::26/128
+          - NIST-2610-20-6f97-97--4-128 2610:20:6f97:97::4/128
+          - NIST-2610-20-6f96-96--4-128 2610:20:6f96:96::4/128
+
+        address-set GOOGLE-DNS-IPV4:
+          address:
+            - GOOGLE-8-8-4-4-32
+            - GOOGLE-8-8-8-8-32
+
+        address-set GOOGLE-DNS-IPV6:
+          address:
+            - GOOGLE-2001-4860-4860--8844-128
+            - GOOGLE-2001-4860-4860--8888-128
+
+        address-set NIST-NTP-IPV4:
+          address:
+            - NIST-129-6-15-27-32
+            - NIST-129-6-15-26-32
+            - NIST-132-163-97-4-32
+            - NIST-132-163-96-4-32
+
+        address-set NIST-NTP-IPV6:
+          address:
+            - NIST-2610-20-6f15-15--27-128
+            - NIST-2610-20-6f15-15--26-128
+            - NIST-2610-20-6f97-97--4-128
+            - NIST-2610-20-6f96-96--4-128
+
+    screen:
+      ids-option UNTRUST-SCREEN:
+        icmp:
+          ping-death: true
+        ip:
+          source-route-option: true
+          tear-drop: true
+        tcp:
+          syn-flood:
+            alarm-threshold: 1024
+            attack-threshold: 200
+            source-threshold: 1024
+            destination-threshold: 2048
+            timeout: 20
+          land: true
