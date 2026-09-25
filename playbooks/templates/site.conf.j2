@@ -1,8 +1,0 @@
-{# Configuration to be applied to all hosts set in group_vars/all.yml #}
-{{ junos_config_base | default({}) | iambryant.junos.to_junos }}
-
-{# Configuration to be applied to a group of hosts set in group_vars/<group>.yml #}
-{{ junos_config_group | default({}) | iambryant.junos.to_junos }}
-
-{# Configuration to be applied to an individual host set in host_vars #}
-{{ junos_config_host | default({}) | iambryant.junos.to_junos }}

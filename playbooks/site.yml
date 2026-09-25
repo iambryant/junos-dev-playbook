@@ -26,26 +26,22 @@
       when: junos_reboot_required is defined and junos_reboot_required | length > 0
       notify: "Reboot device"
 
-    - name: "Render site.conf.j2 locally to inherit Ansible variables"
-      ansible.builtin.template:
-        src: "site.conf.j2"
-        dest: "/tmp/rendered_base_config_{{ inventory_hostname }}.conf"
-        mode: '0600'
-      changed_when: false
+    - name: "Ensure Junos OS configuration tiers are merged"
+      ansible.builtin.set_fact:
+        merged_junos_config: >-
+          {{
+            junos_config_base | default({})
+            | combine(junos_config_group | default({}), recursive=True)
+            | combine(junos_config_host | default({}), recursive=True, list_merge='replace')
+          }}
 
     - name: "Ensure Junos OS configuration is applied with Ansible"
       juniper.device.config:
         load: "merge"
         format: "text"
-        src: "/tmp/rendered_base_config_{{ inventory_hostname }}.conf"
+        lines: "{{ merged_junos_config | iambryant.junos.to_junos }}"
         comment: "{{ commit_message | default('Automated deployment via Ansible') }}"
         timeout: 300
-
-    - name: "Ensure locally rendered file is removed"
-      ansible.builtin.file:
-        path: "/tmp/rendered_base_config_{{ inventory_hostname }}.conf"
-        state: absent
-      changed_when: false
 
   handlers:
     - name: "Ensure device is rebooted"
