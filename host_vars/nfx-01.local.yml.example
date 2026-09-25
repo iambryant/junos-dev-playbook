@@ -17,14 +17,12 @@ junos_config_host:
   interfaces:
     apply-groups: "NFX-SXE-DEFAULT"
     sxe-0/0/0:
-      "unit 0":
-        family:
-          ethernet-switching:
+      unit 0:
+        family ethernet-switching:
             interface-mode: "trunk"
     sxe-0/0/1:
-      "unit 0":
-        family:
-          ethernet-switching:
+      unit 0:
+        family ethernet-switching:
             interface-mode: "trunk"
 
   # VLANs only need to be defined in the vlans stanza in NFX if they're being bridged to front panel ports via
