@@ -103,36 +103,40 @@ routing-instances {
 It contains the minimum configuration needed to get a device ready for being managed with Ansible as well as any
 additional configuration needed for hardening the device straight out of the box.
 
-Now, looking at `site.conf.j2`, you may be confused seeing only these three statements:
+> [!NOTE] If you are managing the device over serial, make sure to run `delete chassis auto-image-upgrade` if 
+> `chassis auto-image-upgrade` is present in the configuration. The constant `Auto Image Upgrade` messages will pollute
+> Ansible's serial connection and cause tasks to hang. 
 
-```text
-{# Configuration to be applied to all hosts set in group_vars/all.yml #}
-{{ junos_config_base | default({}) | iambryant.junos.to_junos }}
+Junos OS configurations are stored in three separate dictionaries: `junos_config_base`, `junos_config_group`, and
+`junos_config_host`. They are dictionaries that you can apply either as a base configuration for all hosts, for a group
+of hosts, or for a specific host. You can define your Junos OS configuration as YAML, and the `to_junos` plugin
+([from a separate Junos collection I've written](https://github.com/iambryant/ansible-collection-junos)) will translate
+it to Junos configuration! The dictionaries are merged like this:
 
-{# Configuration to be applied to a group of hosts set in group_vars/<group>.yml #}
-{{ junos_config_group | default({}) | iambryant.junos.to_junos }}
-
-{# Configuration to be applied to an individual host set in host_vars #}
-{{ junos_config_host | default({}) | iambryant.junos.to_junos }}
+```yaml
+- name: "Ensure Junos OS configuration tiers are merged"
+  ansible.builtin.set_fact:
+    merged_junos_config: >-
+      {{
+        junos_config_base | default({})
+        | combine(junos_config_group | default({}), recursive=True)
+        | combine(junos_config_host | default({}), recursive=True, list_merge='replace')
+      }}
 ```
 
-`junos_config_base`, `junos_config_group`, and `junos_config_host`, are dictionaries that you can apply either as a base
-configuration for all hosts, for a group of hosts, or for a specific host. You can define your Junos OS configuration as
-YAML, and the `to_junos` plugin (from a separate Junos collection I've written) will translate it to Junos
-configuration! For examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles
-pushing and managing the configuration using the `juniper.device.config` module.
+For examples, please view the `.example` files in `host_vars` and `group_vars`. Ansible still handles pushing and
+managing the configuration using the `juniper.device.config` module.
 
 `site.conf.j2` is applied using the `site.yml` playbook, and can be run like this (`commit_message` isn't required but
-is good practice for informative commits)
+is good practice for informative commits):
 
 ```text
 ansible-playbook site.yml -e "commit_message='Ensure my example configuration is applied'"
 ```
 
-
-**Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases are
-different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork the
-repository. My goal is to just get the ball rolling in terms of automation on the Junos OS platform.**
+**Please note that the templates/configuration in this repository are by no means absolute. If you believe your usecases
+are different or if you find my configuration to not be as advanced, please feel free to create a pull request or fork
+the repository. My goal is to just get the ball rolling in terms of automation on the Junos OS platform.**
 
 ## Requirements
 
